@@ -1,0 +1,483 @@
+<div class="min-h-screen bg-gray-100">
+  <p-divider class="bg-purple-300 p-divider"></p-divider>
+
+
+  <body class="bg-purple-300 text-white min-h-screen">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Logo ve Başlık -->
+    <div class="flex justify-center items-center mb-8">
+      <h1 class="text-2xl font-bold text-center">
+        <i class="pi pi-chart-line mr-2 text-red-500"></i>
+        Yatırım Tavsiyeleri Platformu
+      </h1>
+      <div>
+
+      </div>
+    </div>
+
+
+    <!-- Filtreleme Butonları -->
+    <div class="flex justify-center mb-6 gap-2">
+      <button class="p-button p-component transition-all duration-200 px-6 py-3 rounded-l-lg font-medium bg-gray-700 text-white hover:bg-yellow-500 hover:text-gray-900">
+        Bugün Paylaşılan
+      </button>
+
+      <button class="p-button p-component transition-all duration-200 px-6 py-3 font-medium bg-gray-700 text-white hover:bg-yellow-500 hover:text-gray-900">
+        Bu Hafta Paylaşılan
+      </button>
+
+      <button class="p-button p-component transition-all duration-200 px-6 py-3 font-medium bg-gray-700 text-white hover:bg-yellow-500 hover:text-gray-900">
+        Bu Ay Paylaşılan
+      </button>
+
+      <button class="p-button p-component transition-all duration-200 px-6 py-3 rounded-r-lg font-medium bg-gray-700 text-white hover:bg-yellow-500 hover:text-gray-900">
+        Tümü
+      </button>
+    </div>
+
+
+    <!-- Kartlar -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <!-- KARSN Kartı -->
+      <div class="p-card bg-gray-800 rounded-xl overflow-hidden shadow-lg transition-transform duration-300 hover:transform hover:scale-105">
+        <div class="p-4">
+          <div class="bg-white rounded-lg p-3 mb-4 flex justify-center items-center">
+            <img src="https://via.placeholder.com/150x60?text=ALNUS+YATIRIM" alt="ALNUS Yatırım Logo" class="h-12">
+          </div>
+
+          <div class="font-bold text-center text-sm mb-4 pb-3 border-b border-gray-700">
+            KARSN - KARSAN OTOMOTİV SANAYİİ VE TİCARET A.Ş.
+          </div>
+
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-300">Son Fiyat</span>
+              <span class="p-tag bg-gray-700 rounded-full px-3 py-1 font-semibold">9.94 ₺</span>
+            </div>
+
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-green-400">Hedef Fiyat</span>
+              <span class="p-tag bg-green-900 text-green-400 rounded-full px-3 py-1 font-semibold">15.30 ₺</span>
+            </div>
+
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-blue-400">Potansiyel Getiri</span>
+              <span class="p-tag bg-blue-900 text-blue-400 rounded-full px-3 py-1 font-semibold">%53.92</span>
+            </div>
+          </div>
+
+          <div class="flex gap-2 mt-6">
+            <button class="p-button p-component flex-none w-10 h-10 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600">
+              <i class="pi pi-thumbs-down"></i>
+            </button>
+
+            <button class="p-button p-component flex-grow py-2 rounded-lg bg-green-600 hover:bg-green-700 font-semibold">
+              <i class="pi pi-check-circle mr-2"></i>
+              Al
+            </button>
+
+            <button class="p-button p-component flex-none w-10 h-10 flex items-center justify-center rounded-full bg-yellow-500 text-gray-900 hover:bg-yellow-600">
+              <i class="pi pi-thumbs-up"></i>
+            </button>
+          </div>
+
+          <div class="flex justify-between mt-2 px-2 text-xs text-gray-400">
+            <span>0</span>
+            <span>0</span>
+          </div>
+
+          <div class="text-center text-xs text-gray-500 mt-4">
+            <i class="pi pi-calendar mr-1"></i>
+            Cuma, 21 Mart 2025
+          </div>
+        </div>
+      </div>
+
+      <!-- MAVI Kartı (AHLATCI) -->
+      <div class="p-card bg-gray-800 rounded-xl overflow-hidden shadow-lg transition-transform duration-300 hover:transform hover:scale-105">
+        <div class="p-4">
+          <div class="bg-white rounded-lg p-3 mb-4 flex justify-center items-center">
+            <img src="https://via.placeholder.com/150x60?text=AHLATCI+YATIRIM" alt="AHLATCI Yatırım Logo" class="h-12">
+          </div>
+
+          <div class="font-bold text-center text-sm mb-4 pb-3 border-b border-gray-700">
+            MAVI - MAVİ GİYİM SANAYİ VE TİCARET A.Ş.
+          </div>
+
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-300">Son Fiyat</span>
+              <span class="p-tag bg-gray-700 rounded-full px-3 py-1 font-semibold">63.10 ₺</span>
+            </div>
+
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-green-400">Hedef Fiyat</span>
+              <span class="p-tag bg-green-900 text-green-400 rounded-full px-3 py-1 font-semibold">124.80 ₺</span>
+            </div>
+
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-blue-400">Potansiyel Getiri</span>
+              <span class="p-tag bg-blue-900 text-blue-400 rounded-full px-3 py-1 font-semibold">%97.78</span>
+            </div>
+          </div>
+
+          <div class="flex gap-2 mt-6">
+            <button class="p-button p-component flex-none w-10 h-10 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600">
+              <i class="pi pi-thumbs-down"></i>
+            </button>
+
+            <button class="p-button p-component flex-grow py-2 rounded-lg bg-green-600 hover:bg-green-700 font-semibold">
+              <i class="pi pi-check-circle mr-2"></i>
+              Al
+            </button>
+
+            <button class="p-button p-component flex-none w-10 h-10 flex items-center justify-center rounded-full bg-yellow-500 text-gray-900 hover:bg-yellow-600">
+              <i class="pi pi-thumbs-up"></i>
+            </button>
+          </div>
+
+          <div class="flex justify-between mt-2 px-2 text-xs text-gray-400">
+            <span>0</span>
+            <span>1</span>
+          </div>
+
+          <div class="text-center text-xs text-gray-500 mt-4">
+            <i class="pi pi-calendar mr-1"></i>
+            Perşembe, 20 Mart 2025
+          </div>
+        </div>
+      </div>
+
+      <!-- MAVI Kartı (ALNUS) -->
+      <div class="p-card bg-gray-800 rounded-xl overflow-hidden shadow-lg transition-transform duration-300 hover:transform hover:scale-105">
+        <div class="p-4">
+          <div class="bg-white rounded-lg p-3 mb-4 flex justify-center items-center">
+            <img src="https://via.placeholder.com/150x60?text=ALNUS+YATIRIM" alt="ALNUS Yatırım Logo" class="h-12">
+          </div>
+
+          <div class="font-bold text-center text-sm mb-4 pb-3 border-b border-gray-700">
+            MAVI - MAVİ GİYİM SANAYİ VE TİCARET A.Ş.
+          </div>
+
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-300">Son Fiyat</span>
+              <span class="p-tag bg-gray-700 rounded-full px-3 py-1 font-semibold">63.10 ₺</span>
+            </div>
+
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-green-400">Hedef Fiyat</span>
+              <span class="p-tag bg-green-900 text-green-400 rounded-full px-3 py-1 font-semibold">120.00 ₺</span>
+            </div>
+
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-blue-400">Potansiyel Getiri</span>
+              <span class="p-tag bg-blue-900 text-blue-400 rounded-full px-3 py-1 font-semibold">%90.17</span>
+            </div>
+          </div>
+
+          <div class="flex gap-2 mt-6">
+            <button class="p-button p-component flex-none w-10 h-10 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600">
+              <i class="pi pi-thumbs-down"></i>
+            </button>
+
+            <button class="p-button p-component flex-grow py-2 rounded-lg bg-green-600 hover:bg-green-700 font-semibold">
+              <i class="pi pi-check-circle mr-2"></i>
+              Al
+            </button>
+
+            <button class="p-button p-component flex-none w-10 h-10 flex items-center justify-center rounded-full bg-yellow-500 text-gray-900 hover:bg-yellow-600">
+              <i class="pi pi-thumbs-up"></i>
+            </button>
+          </div>
+
+          <div class="flex justify-between mt-2 px-2 text-xs text-gray-400">
+            <span>1</span>
+            <span>1</span>
+          </div>
+
+          <div class="text-center text-xs text-gray-500 mt-4">
+            <i class="pi pi-calendar mr-1"></i>
+            Perşembe, 20 Mart 2025
+          </div>
+        </div>
+      </div>
+
+      <!-- MAVI Kartı (OYAK) -->
+      <div class="p-card bg-gray-800 rounded-xl overflow-hidden shadow-lg transition-transform duration-300 hover:transform hover:scale-105">
+        <div class="p-4">
+          <div class="bg-white rounded-lg p-3 mb-4 flex justify-center items-center">
+            <img src="https://via.placeholder.com/150x60?text=OYAK+YATIRIM" alt="OYAK Yatırım Logo" class="h-12">
+          </div>
+
+          <div class="font-bold text-center text-sm mb-4 pb-3 border-b border-gray-700">
+            MAVI - MAVİ GİYİM SANAYİ VE TİCARET A.Ş.
+          </div>
+
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-300">Son Fiyat</span>
+              <span class="p-tag bg-gray-700 rounded-full px-3 py-1 font-semibold">63.10 ₺</span>
+            </div>
+
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-green-400">Hedef Fiyat</span>
+              <span class="p-tag bg-green-900 text-green-400 rounded-full px-3 py-1 font-semibold">118.00 ₺</span>
+            </div>
+
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-blue-400">Potansiyel Getiri</span>
+              <span class="p-tag bg-blue-900 text-blue-400 rounded-full px-3 py-1 font-semibold">%87.00</span>
+            </div>
+          </div>
+
+          <div class="flex gap-2 mt-6">
+            <button class="p-button p-component flex-none w-10 h-10 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600">
+              <i class="pi pi-thumbs-down"></i>
+            </button>
+
+            <button class="p-button p-component flex-grow py-2 rounded-lg bg-blue-600 hover:bg-blue-700 font-semibold text-xs sm:text-sm">
+              <i class="pi pi-chart-line mr-1"></i>
+              Endeks Üstü Get.
+            </button>
+
+            <button class="p-button p-component flex-none w-10 h-10 flex items-center justify-center rounded-full bg-yellow-500 text-gray-900 hover:bg-yellow-600">
+              <i class="pi pi-thumbs-up"></i>
+            </button>
+          </div>
+
+          <div class="flex justify-between mt-2 px-2 text-xs text-gray-400">
+            <span>0</span>
+            <span>1</span>
+          </div>
+
+          <div class="text-center text-xs text-gray-500 mt-4">
+            <i class="pi pi-calendar mr-1"></i>
+            Perşembe, 20 Mart 2025
+          </div>
+        </div>
+      </div>
+      <div class="p-card bg-gray-800 rounded-xl overflow-hidden shadow-lg transition-transform duration-300 hover:transform hover:scale-105">
+        <div class="p-4">
+          <div class="bg-white rounded-lg p-3 mb-4 flex justify-center items-center">
+            <img src="https://via.placeholder.com/150x60?text=ALNUS+YATIRIM" alt="ALNUS Yatırım Logo" class="h-12">
+          </div>
+
+          <div class="font-bold text-center text-sm mb-4 pb-3 border-b border-gray-700">
+            MAVI - MAVİ GİYİM SANAYİ VE TİCARET A.Ş.
+          </div>
+
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-300">Son Fiyat</span>
+              <span class="p-tag bg-gray-700 rounded-full px-3 py-1 font-semibold">63.10 ₺</span>
+            </div>
+
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-green-400">Hedef Fiyat</span>
+              <span class="p-tag bg-green-900 text-green-400 rounded-full px-3 py-1 font-semibold">120.00 ₺</span>
+            </div>
+
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-blue-400">Potansiyel Getiri</span>
+              <span class="p-tag bg-blue-900 text-blue-400 rounded-full px-3 py-1 font-semibold">%90.17</span>
+            </div>
+          </div>
+
+          <div class="flex gap-2 mt-6">
+            <button class="p-button p-component flex-none w-10 h-10 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600">
+              <i class="pi pi-thumbs-down"></i>
+            </button>
+
+            <button class="p-button p-component flex-grow py-2 rounded-lg bg-green-600 hover:bg-green-700 font-semibold">
+              <i class="pi pi-check-circle mr-2"></i>
+              Al
+            </button>
+
+            <button class="p-button p-component flex-none w-10 h-10 flex items-center justify-center rounded-full bg-yellow-500 text-gray-900 hover:bg-yellow-600">
+              <i class="pi pi-thumbs-up"></i>
+            </button>
+          </div>
+
+          <div class="flex justify-between mt-2 px-2 text-xs text-gray-400">
+            <span>1</span>
+            <span>1</span>
+          </div>
+
+          <div class="text-center text-xs text-gray-500 mt-4">
+            <i class="pi pi-calendar mr-1"></i>
+            Perşembe, 20 Mart 2025
+          </div>
+        </div>
+      </div> <div class="p-card bg-gray-800 rounded-xl overflow-hidden shadow-lg transition-transform duration-300 hover:transform hover:scale-105">
+      <div class="p-4">
+        <div class="bg-white rounded-lg p-3 mb-4 flex justify-center items-center">
+          <img src="https://via.placeholder.com/150x60?text=ALNUS+YATIRIM" alt="ALNUS Yatırım Logo" class="h-12">
+        </div>
+
+        <div class="font-bold text-center text-sm mb-4 pb-3 border-b border-gray-700">
+          MAVI - MAVİ GİYİM SANAYİ VE TİCARET A.Ş.
+        </div>
+
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-300">Son Fiyat</span>
+            <span class="p-tag bg-gray-700 rounded-full px-3 py-1 font-semibold">63.10 ₺</span>
+          </div>
+
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-green-400">Hedef Fiyat</span>
+            <span class="p-tag bg-green-900 text-green-400 rounded-full px-3 py-1 font-semibold">120.00 ₺</span>
+          </div>
+
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-blue-400">Potansiyel Getiri</span>
+            <span class="p-tag bg-blue-900 text-blue-400 rounded-full px-3 py-1 font-semibold">%90.17</span>
+          </div>
+        </div>
+
+        <div class="flex gap-2 mt-6">
+          <button class="p-button p-component flex-none w-10 h-10 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600">
+            <i class="pi pi-thumbs-down"></i>
+          </button>
+
+          <button class="p-button p-component flex-grow py-2 rounded-lg bg-green-600 hover:bg-green-700 font-semibold">
+            <i class="pi pi-check-circle mr-2"></i>
+            Al
+          </button>
+
+          <button class="p-button p-component flex-none w-10 h-10 flex items-center justify-center rounded-full bg-yellow-500 text-gray-900 hover:bg-yellow-600">
+            <i class="pi pi-thumbs-up"></i>
+          </button>
+        </div>
+
+        <div class="flex justify-between mt-2 px-2 text-xs text-gray-400">
+          <span>1</span>
+          <span>1</span>
+        </div>
+
+        <div class="text-center text-xs text-gray-500 mt-4">
+          <i class="pi pi-calendar mr-1"></i>
+          Perşembe, 20 Mart 2025
+        </div>
+      </div>
+    </div> <div class="p-card bg-gray-800 rounded-xl overflow-hidden shadow-lg transition-transform duration-300 hover:transform hover:scale-105">
+      <div class="p-4">
+        <div class="bg-white rounded-lg p-3 mb-4 flex justify-center items-center">
+          <img src="https://via.placeholder.com/150x60?text=ALNUS+YATIRIM" alt="ALNUS Yatırım Logo" class="h-12">
+        </div>
+
+        <div class="font-bold text-center text-sm mb-4 pb-3 border-b border-gray-700">
+          MAVI - MAVİ GİYİM SANAYİ VE TİCARET A.Ş.
+        </div>
+
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-300">Son Fiyat</span>
+            <span class="p-tag bg-gray-700 rounded-full px-3 py-1 font-semibold">63.10 ₺</span>
+          </div>
+
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-green-400">Hedef Fiyat</span>
+            <span class="p-tag bg-green-900 text-green-400 rounded-full px-3 py-1 font-semibold">120.00 ₺</span>
+          </div>
+
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-blue-400">Potansiyel Getiri</span>
+            <span class="p-tag bg-blue-900 text-blue-400 rounded-full px-3 py-1 font-semibold">%90.17</span>
+          </div>
+        </div>
+
+        <div class="flex gap-2 mt-6">
+          <button class="p-button p-component flex-none w-10 h-10 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600">
+            <i class="pi pi-thumbs-down"></i>
+          </button>
+
+          <button class="p-button p-component flex-grow py-2 rounded-lg bg-green-600 hover:bg-green-700 font-semibold">
+            <i class="pi pi-check-circle mr-2"></i>
+            Al
+          </button>
+
+          <button class="p-button p-component flex-none w-10 h-10 flex items-center justify-center rounded-full bg-yellow-500 text-gray-900 hover:bg-yellow-600">
+            <i class="pi pi-thumbs-up"></i>
+          </button>
+        </div>
+
+        <div class="flex justify-between mt-2 px-2 text-xs text-gray-400">
+          <span>1</span>
+          <span>1</span>
+        </div>
+
+        <div class="text-center text-xs text-gray-500 mt-4">
+          <i class="pi pi-calendar mr-1"></i>
+          Perşembe, 20 Mart 2025
+        </div>
+      </div>
+    </div> <div class="p-card bg-gray-800 rounded-xl overflow-hidden shadow-lg transition-transform duration-300 hover:transform hover:scale-105">
+      <div class="p-4">
+        <div class="bg-white rounded-lg p-3 mb-4 flex justify-center items-center">
+          <img src="https://via.placeholder.com/150x60?text=ALNUS+YATIRIM" alt="ALNUS Yatırım Logo" class="h-12">
+        </div>
+
+        <div class="font-bold text-center text-sm mb-4 pb-3 border-b border-gray-700">
+          MAVI - MAVİ GİYİM SANAYİ VE TİCARET A.Ş.
+        </div>
+
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-300">Son Fiyat</span>
+            <span class="p-tag bg-gray-700 rounded-full px-3 py-1 font-semibold">63.10 ₺</span>
+          </div>
+
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-green-400">Hedef Fiyat</span>
+            <span class="p-tag bg-green-900 text-green-400 rounded-full px-3 py-1 font-semibold">120.00 ₺</span>
+          </div>
+
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-blue-400">Potansiyel Getiri</span>
+            <span class="p-tag bg-blue-900 text-blue-400 rounded-full px-3 py-1 font-semibold">%90.17</span>
+          </div>
+        </div>
+
+        <div class="flex gap-2 mt-6">
+          <button class="p-button p-component flex-none w-10 h-10 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600">
+            <i class="pi pi-thumbs-down"></i>
+          </button>
+
+          <button class="p-button p-component flex-grow py-2 rounded-lg bg-green-600 hover:bg-green-700 font-semibold">
+            <i class="pi pi-check-circle mr-2"></i>
+            Al
+          </button>
+
+          <button class="p-button p-component flex-none w-10 h-10 flex items-center justify-center rounded-full bg-yellow-500 text-gray-900 hover:bg-yellow-600">
+            <i class="pi pi-thumbs-up"></i>
+          </button>
+        </div>
+
+        <div class="flex justify-between mt-2 px-2 text-xs text-gray-400">
+          <span>1</span>
+          <span>1</span>
+        </div>
+
+        <div class="text-center text-xs text-gray-500 mt-4">
+          <i class="pi pi-calendar mr-1"></i>
+          Perşembe, 20 Mart 2025
+        </div>
+      </div>
+    </div>
+
+    </div>
+    <p-paginator
+      [rows]="pageSize"
+      [totalRecords]="allCards.length"
+      (onPageChange)="onPageChange($event)"
+      class="mt-4 flex justify-center">
+    </p-paginator>
+  </div>
+  </body>
+  <footer class="bg-purple-600 text-white text-center p-4 mt-8">
+  <p class="text-sm">💙 Finansal Tahmin Sistemi - Tüm Hakları Saklıdır.</p>
+  <p class="text-xs mt-2">Made with 💖 by <span class="font-semibold">Bazo</span></p>
+  </footer>
+</div>
