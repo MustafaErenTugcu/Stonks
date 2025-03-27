@@ -6,5 +6,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./compare.component.css']
 })
 export class CompareComponent {
+  isVisible = false;
+
+  karsilastirClick(){
+    this.isVisible = true;
+  }
 
 }
