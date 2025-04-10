@@ -17,4 +17,9 @@ body {
 h1 {
   color: #333;
 }
+.pozisyon{
+  bottom:114px;
+}
 
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

@@ -8,4 +8,5 @@ import {Component, NgIterable} from '@angular/core';
 export class StocksComponent {
   logos: NgIterable<unknown> & NgIterable<any>;
 
+
 }
