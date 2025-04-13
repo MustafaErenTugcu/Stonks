@@ -1,82 +1,71 @@
-import { Component } from '@angular/core';
-import {StockData} from "../interfaces/stock-data";
-
+import { Component, OnInit } from '@angular/core';
+import { RadarService } from '../services/radar.service';
 
 @Component({
   selector: 'app-radar',
   templateUrl: './radar.component.html',
   styleUrls: ['./radar.component.css']
 })
-export class RadarComponent {
-  stockData: StockData[] = [
-    {
-      senetKodu: 'KARSN',
-      tavsiyeTipi: 'AI',
-      hedefFiyat: 15.30,
-      getiriPotansiyeli: 45.02,
-      oneriTarihi: '21.03.2025',
-      kapanis: 10.55,
-      oncekiHedef:45,
-      oncekiOneriTarihi:"12.11.2001",
-      kurumAdi: 'Alnus Yatırım'
-    },
-    {
-      senetKodu: 'MGROS',
-      tavsiyeTipi: 'Endeks Üstü Get.',
-      hedefFiyat: 819.20,
-      getiriPotansiyeli: 66.50,
-      oneriTarihi: '20.03.2025',
-      kapanis: 492.00,
-      oncekiHedef:45,
-      oncekiOneriTarihi:"12.11.2001",
-      kurumAdi: 'Tera Yatırım'
-    },
-    {
-      senetKodu: 'MAVI',
-      tavsiyeTipi: 'Endeks Üstü Get.',
-      hedefFiyat: 118.00,
-      getiriPotansiyeli: 74.30,
-      oneriTarihi: '20.03.2025',
-      kapanis: 67.70,
-      oncekiHedef:45,
-      oncekiOneriTarihi:"12.11.2001",
-      kurumAdi: 'Oyak Yatırım'
-    },
-    {
-      senetKodu: 'MAVI',
-      tavsiyeTipi: 'AI',
-      hedefFiyat: 124.80,
-      getiriPotansiyeli: 84.34,
-      oneriTarihi: '20.03.2025',
-      kapanis: 67.70,
-      oncekiHedef:45,
-      oncekiOneriTarihi:"12.11.2001",
-      kurumAdi: 'Ahlatcı Yatırım'
-    },
-    {
-      senetKodu: 'MAVI',
-      tavsiyeTipi: 'AI',
-      hedefFiyat: 120.00,
-      getiriPotansiyeli: 77.25,
-      oneriTarihi: '20.03.2025',
-      kapanis: 67.70,
-      oncekiHedef:45,
-      oncekiOneriTarihi:"12.11.2001",
-      kurumAdi: 'Alnus Yatırım'
-    }
-  ];
-  allCards = Array.from({ length: 40 }, (_, i) => ({
-    id: i + 1,
-    title: `Kart ${i + 1}`,
-    description: `Bu, Kart ${i + 1} için açıklamadır.`
-  }));
+export class RadarComponent implements OnInit {
+  stockData: any[] = [];       // Tabloda gösterilen veriler (sayfalama uygulanmış)
+  allCards: any[] = [];        // API'den gelen tüm radar verisi
+  pageSize: number = 5;        // Sayfa başına gösterilecek veri sayısı
+  totalRecords: number = 0;    // Toplam veri sayısı (sayfalama için)
 
-  pageSize: 12;
-  currentPage = 0;
-  onPageChange(event: any) {
-    // Pagination logic
-    const startIndex = event.first;
-    const endIndex = startIndex + event.rows;
+  sectors: string[] = ['Technology', 'E-Commerce', 'Automotive', 'Semiconductors'];
+  adviceTypes: string[] = ['Endeks Üstü Get.', 'Tut', 'Sat', 'Al'];
+  institutions: string[] = ['Apple', 'Amazon', 'Tesla', 'Google', 'Nvidia', 'Intel'];
+  stockCodes: string[] = ['AAPL', 'AMZN', 'TSLA', 'GOOGL', 'NVDA', 'INTC'];
 
+  selectedSector: string = '';
+  selectedAdvice: string = '';
+  selectedInstitution: string = '';
+  selectedStockCode: string = '';
+  startDate: any = '';
+  endDate: any = '';
+
+  constructor(private radarService: RadarService) {}
+
+  ngOnInit(): void {
+    this.getRadarData();
+  }
+
+  getRadarData(): void {
+    const formatDate = (d: any): string =>
+      d instanceof Date ? d.toISOString().split('T')[0] : d;
+
+    this.radarService.getRadarData(
+      this.selectedSector,
+      this.selectedAdvice,
+      this.selectedInstitution,
+      formatDate(this.startDate),
+      formatDate(this.endDate),
+      this.selectedStockCode
+    ).subscribe({
+      next: (data) => {
+        this.allCards = data;
+        this.totalRecords = data.length;
+        this.stockData = this.allCards.slice(0, this.pageSize);
+      },
+      error: (err) => {
+        console.error('Radar verileri alınamadı:', err);
+      }
+    });
+  }
+
+  onPageChange(event: any): void {
+    const start = event.first;
+    const end = event.first + event.rows;
+    this.stockData = this.allCards.slice(start, end);
+  }
+
+  clearFilters(): void {
+    this.selectedSector = '';
+    this.selectedAdvice = '';
+    this.selectedInstitution = '';
+    this.startDate = '';
+    this.endDate = '';
+    this.selectedStockCode = '';
+    this.getRadarData();
   }
 }

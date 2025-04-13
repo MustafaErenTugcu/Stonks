@@ -104,7 +104,27 @@ symbol_to_sector = {
 model_dir = "models"
 os.makedirs(model_dir, exist_ok=True)
 
-advice_options = ["AI", "Endeks Üstü Get.", "Tut", "Sat", "Al"]
+advice_options = ["Endeks Üstü Get.", "Tut", "Sat", "Al"]
+
+@app.on_event("startup")
+def generate_initial_recommendations():
+    today = datetime.today().date().isoformat()
+    with sqlite3.connect(DB_NAME) as conn:
+        c = conn.cursor()
+        c.execute("SELECT COUNT(*) FROM recommendations WHERE advice_date = ?", (today,))
+        already_generated = c.fetchone()[0] > 0
+
+    if already_generated:
+        return
+
+    for symbol in symbols_info.values():
+        dummy_request = StockFilterRequest(
+            symbol=symbol,
+            start_date=datetime.today().date().replace(year=datetime.today().year - 1),
+            end_date=datetime.today().date(),
+            days_forward=7
+        )
+        predict_stock(dummy_request)
 
 @app.get("/institutions")
 def get_institutions():
@@ -131,102 +151,6 @@ def get_stock_data(symbol: str, start: str, end: str):
         return df.to_dict(orient="records")
     except Exception as e:
         return {"error": str(e)}
-
-@app.post("/stocks/predict", response_model=PredictionResponse)
-def predict_stock(request: StockFilterRequest):
-    try:
-        history = yf.download(request.symbol, start=request.start_date, end=request.end_date)
-        if history.empty or len(history) < 100:
-            return {"symbol": request.symbol, "predicted_prices": []}
-
-        df = history[['Open', 'High', 'Low', 'Close', 'Volume']].copy()
-        close_series = pd.Series(df['Close'].values.ravel())
-        df['RSI'] = RSIIndicator(close=close_series).rsi().values
-        df['MACD'] = MACD(close=close_series).macd().values
-        df = df.dropna()
-
-        if len(df) < 100:
-            return {"symbol": request.symbol, "predicted_prices": []}
-
-        features = df[['Close', 'Volume', 'RSI', 'MACD']]
-        scaler_path = os.path.join(model_dir, f"{request.symbol}_scaler.save")
-        model_path = os.path.join(model_dir, f"{request.symbol}_lstm.h5")
-
-        scaler = joblib.load(scaler_path)
-        model = load_model(model_path)
-
-        scaled_data = scaler.transform(features)
-        last_60 = scaled_data[-60:].reshape(1, 60, scaled_data.shape[1])
-
-        forecast_prices = []
-        for _ in range(request.days_forward):
-            predicted_scaled = model.predict(last_60, verbose=0)
-            target_price_scaled = predicted_scaled[0][0]
-            inverse_input = np.array([[target_price_scaled] + [0]*(scaled_data.shape[1]-1)])
-            predicted_price = scaler.inverse_transform(inverse_input)[0][0]
-            forecast_prices.append(round(float(predicted_price), 2))
-
-            next_input = np.append(last_60[0][1:], [[predicted_scaled[0][0], 0, 0, 0]], axis=0)
-            last_60 = next_input.reshape(1, 60, scaled_data.shape[1])
-
-        with sqlite3.connect(DB_NAME) as conn:
-            c = conn.cursor()
-            current_price = float(df['Close'].iloc[-1])
-            highest = max(forecast_prices)
-            lowest = min(forecast_prices)
-            avg = round(sum(forecast_prices) / len(forecast_prices), 2)
-
-            advice_date = datetime.today().date().isoformat()
-            institution_name = next((name for name, sym in symbols_info.items() if sym == request.symbol), request.symbol)
-            sector = symbol_to_sector.get(request.symbol, "Other")
-
-            c.execute("""
-                INSERT INTO stock_comparisons (stock_code, current_price, highest_prediction, lowest_prediction, average_prediction)
-                VALUES (?, ?, ?, ?, ?)
-            """, (request.symbol, current_price, highest, lowest, avg))
-
-            c.execute("""
-                INSERT OR REPLACE INTO featured_stocks (
-                    id, stock_code, stock_name, institution_count, close_price,
-                    avg_target_price, avg_potential_return, highest_target_price, highest_potential_return
-                ) VALUES (
-                    (SELECT id FROM featured_stocks WHERE stock_code = ?), ?, ?, ?, ?, ?, ?, ?, ?
-                )
-            """, (
-                request.symbol,
-                request.symbol,
-                institution_name,
-                1,
-                current_price,
-                avg,
-                round(((avg - current_price) / current_price) * 100, 2),
-                highest,
-                round(((highest - current_price) / current_price) * 100, 2)
-            ))
-
-            c.execute("""
-                INSERT INTO recommendations (
-                    stock_code, advice_type, target_price, potential_return, advice_date,
-                    close_price, prev_target, prev_advice_date, institution, sector
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                request.symbol,
-                random.choice(advice_options),
-                avg,
-                round(((avg - current_price) / current_price) * 100, 2),
-                advice_date,
-                current_price,
-                round(current_price * random.uniform(1.1, 1.4), 2),
-                "2024-01-01",
-                institution_name,
-                sector
-            ))
-
-            conn.commit()
-
-        return {"symbol": request.symbol, "predicted_prices": forecast_prices}
-    except Exception as e:
-        return {"symbol": request.symbol, "predicted_prices": [], "error": str(e)}
 
 @app.get("/radar")
 def get_radar_data(
@@ -291,23 +215,111 @@ def get_featured_stocks():
         columns = [desc[0] for desc in c.description]
         return [dict(zip(columns, row)) for row in rows]
 
-# Automatically populate recommendations for all stocks on startup
-@app.on_event("startup")
-def generate_initial_recommendations():
-    today = datetime.today().date().isoformat()
-    with sqlite3.connect(DB_NAME) as conn:
-        c = conn.cursor()
-        c.execute("SELECT COUNT(*) FROM recommendations WHERE advice_date = ?", (today,))
-        already_generated = c.fetchone()[0] > 0
+@app.post("/stocks/predict", response_model=PredictionResponse)
+def predict_stock(request: StockFilterRequest):
+    try:
+        history = yf.download(request.symbol, start=request.start_date, end=request.end_date)
+        if history.empty or len(history) < 100:
+            return {"symbol": request.symbol, "predicted_prices": []}
 
-    if already_generated:
-        return
+        df = history[['Open', 'High', 'Low', 'Close', 'Volume']].copy()
+        close_series = pd.Series(df['Close'].values.ravel())
+        df['RSI'] = RSIIndicator(close=close_series).rsi().values
+        df['MACD'] = MACD(close=close_series).macd().values
+        df = df.dropna()
 
-    for symbol in symbols_info.values():
-        dummy_request = StockFilterRequest(
-            symbol=symbol,
-            start_date=datetime.today().date().replace(year=datetime.today().year - 1),
-            end_date=datetime.today().date(),
-            days_forward=7
-        )
-        predict_stock(dummy_request)
+        if len(df) < 100:
+            return {"symbol": request.symbol, "predicted_prices": []}
+
+        features = df[['Close', 'Volume', 'RSI', 'MACD']]
+        scaler_path = os.path.join(model_dir, f"{request.symbol}_scaler.save")
+        model_path = os.path.join(model_dir, f"{request.symbol}_lstm.h5")
+
+        scaler = joblib.load(scaler_path)
+        model = load_model(model_path)
+
+        scaled_data = scaler.transform(features)
+        last_60 = scaled_data[-60:].reshape(1, 60, scaled_data.shape[1])
+
+        forecast_prices = []
+        for _ in range(request.days_forward):
+            predicted_scaled = model.predict(last_60, verbose=0)
+            target_price_scaled = predicted_scaled[0][0]
+            inverse_input = np.array([[target_price_scaled] + [0]*(scaled_data.shape[1]-1)])
+            predicted_price = scaler.inverse_transform(inverse_input)[0][0]
+            forecast_prices.append(round(float(predicted_price), 2))
+
+            next_input = np.append(last_60[0][1:], [[predicted_scaled[0][0], 0, 0, 0]], axis=0)
+            last_60 = next_input.reshape(1, 60, scaled_data.shape[1])
+
+        with sqlite3.connect(DB_NAME) as conn:
+            c = conn.cursor()
+            current_price = float(df['Close'].iloc[-1])
+            highest = max(forecast_prices)
+            lowest = min(forecast_prices)
+            avg = round(sum(forecast_prices) / len(forecast_prices), 2)
+
+            advice_date = datetime.today().date().isoformat()
+            institution_name = next((name for name, sym in symbols_info.items() if sym == request.symbol), request.symbol)
+            sector = symbol_to_sector.get(request.symbol, "Other")
+
+            c.execute("""
+                SELECT target_price, advice_date FROM recommendations
+                WHERE stock_code = ? AND advice_date < ?
+                ORDER BY advice_date DESC
+                LIMIT 1
+            """, (request.symbol, advice_date))
+            prev = c.fetchone()
+
+            if prev:
+                prev_target, prev_advice_date = prev
+            else:
+                prev_target, prev_advice_date = (round(current_price * random.uniform(1.1, 1.4), 2), "2024-01-01")
+
+            c.execute("""
+                INSERT INTO stock_comparisons (stock_code, current_price, highest_prediction, lowest_prediction, average_prediction)
+                VALUES (?, ?, ?, ?, ?)
+            """, (request.symbol, current_price, highest, lowest, avg))
+
+            c.execute("""
+                INSERT OR REPLACE INTO featured_stocks (
+                    id, stock_code, stock_name, institution_count, close_price,
+                    avg_target_price, avg_potential_return, highest_target_price, highest_potential_return
+                ) VALUES (
+                    (SELECT id FROM featured_stocks WHERE stock_code = ?), ?, ?, ?, ?, ?, ?, ?, ?
+                )
+            """, (
+                request.symbol,
+                request.symbol,
+                institution_name,
+                1,
+                current_price,
+                avg,
+                round(((avg - current_price) / current_price) * 100, 2),
+                highest,
+                round(((highest - current_price) / current_price) * 100, 2)
+            ))
+
+            c.execute("""
+                INSERT INTO recommendations (
+                    stock_code, advice_type, target_price, potential_return, advice_date,
+                    close_price, prev_target, prev_advice_date, institution, sector
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                request.symbol,
+                random.choice(advice_options),
+                avg,
+                round(((avg - current_price) / current_price) * 100, 2),
+                advice_date,
+                current_price,
+                prev_target,
+                prev_advice_date,
+                institution_name,
+                sector
+            ))
+
+            conn.commit()
+
+        return {"symbol": request.symbol, "predicted_prices": forecast_prices}
+    except Exception as e:
+        return {"symbol": request.symbol, "predicted_prices": [], "error": str(e)}
