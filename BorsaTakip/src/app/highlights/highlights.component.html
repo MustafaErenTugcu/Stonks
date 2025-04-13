@@ -1,1 +1,64 @@
-<p>highlights works!</p>
+<div class="flex justify-center min-h-screen px-10 py-6 bg-gray-100">
+  <p-card class="w-full max-w-7xl">
+
+    <h1 class="text-xl font-bold text-center">Öne Çıkanlar</h1>
+    <!-- Data Table Section -->
+    <div class="mt-6">
+      <div class="bg-white shadow-md rounded-lg overflow-x-auto">
+        <table class="w-full table-fixed border-collapse whitespace-pre-wrap">
+          <colgroup>
+            <col class="w-[8%]">
+            <col class="w-[10%]">
+            <col class="w-[10%]">
+            <col class="w-[10%]">
+            <col class="w-[10%]">
+            <col class="w-[10%]">
+            <col class="w-[10%]">
+            <col class="w-[10%]">
+            <col class="w-[10%]">
+          </colgroup>
+          <thead class="bg-gray-200">
+          <tr>
+            <th class="border text-center p-2">Sıra No</th>
+            <th class="border text-center  p-2">Senet Kodu</th>
+            <th class="border text-center p-2">Senet Adı</th>
+            <th class="border text-center p-2">Hedef Fiyat Veren Kurum Sayısı</th>
+            <th class="border text-center p-2">Son Kapanış</th>
+            <th class="border text-center p-2">Ortalama Hedef Fiyat</th>
+            <th class="border text-center p-2">Ortalama Getiri Potansiyeli (%)</th>
+            <th class="border text-center  p-2">En Yüksek Hedef Fiyat</th>
+            <th class="border text-center p-2">En Yüksek Fiyatın Getiri Potansiyeli (%)</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let senet of senetler; let i = index" class="hover:bg-gray-500 transition-colors text-center">
+            <td class="p-3 border">{{ i + 1 }}</td>
+            <td class="p-3 border">{{ senet.senetKodu }}</td>
+            <td class="p-3 border">{{ senet.senetAdi }}</td>
+            <td class="p-3 border">{{ senet.hedefFiyatVerenKurumSayisi }}</td>
+            <td class="p-3 border">{{ senet.sonKapanis }}</td>
+            <td class="p-3 border">{{ senet.ortHedefFiyat }}</td>
+            <td class="p-3 border text-green-600 font-bold">{{ senet.ortGetiriPotansiyeli }}</td>
+            <td class="p-3 border">{{ senet.enYuksekHedefFiyat }}</td>
+            <td class="p-3 border">{{ senet.enYuksekFiyatinGetiriPotansiyeli }}</td>
+          </tr>
+          </tbody>
+        </table>
+
+      </div>
+      <p-paginator
+        [rows]="pageSize"
+        [totalRecords]="senetler.length"
+        (onPageChange)="onPageChange($event)"
+        class="mt-4 flex justify-center">
+      </p-paginator>
+    </div>
+  </p-card>
+</div>
+
+<footer class="bg-purple-600 text-white text-center p-4">
+  <p class="text-sm">💙 Finansal Tahmin Sistemi - Tüm Hakları Saklıdır.</p>
+  <p class="text-xs mt-2">Made with 💖 by <span class="font-semibold">Bazo</span></p>
+</footer>
+
+

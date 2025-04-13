@@ -13,25 +13,26 @@ import {TabViewModule} from "primeng/tabview";
 import {DividerModule} from "primeng/divider";
 import {DropdownModule} from "primeng/dropdown";
 import { StocksComponent } from './stocks/stocks.component';
-import { PredictionsComponent } from './predictions/predictions.component';
 import { RadarComponent } from './radar/radar.component';
 import { CompareComponent } from './compare/compare.component';
 import { HighlightsComponent } from './highlights/highlights.component';
-import { ReportsComponent } from './reports/reports.component';
 import { MarketComponent } from './market/market.component';
 import { ContactComponent } from './contact/contact.component';
 import {PaginatorModule} from "primeng/paginator";
+import {BadgeModule} from "primeng/badge";
+import {HttpClientModule} from "@angular/common/http";
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import {DialogModule} from "primeng/dialog";
+import {SpeedDialModule} from "primeng/speeddial";
 
 @NgModule({
   declarations: [
     AppComponent,
     BorsaTakipComponent,
     StocksComponent,
-    PredictionsComponent,
     RadarComponent,
     CompareComponent,
     HighlightsComponent,
-    ReportsComponent,
     MarketComponent,
     ContactComponent
   ],
@@ -46,9 +47,15 @@ import {PaginatorModule} from "primeng/paginator";
     TabViewModule,
     DividerModule,
     DropdownModule,
-    PaginatorModule
+    PaginatorModule,
+    BadgeModule,
+    HttpClientModule,
+    NoopAnimationsModule,
+    DialogModule,
+    SpeedDialModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

@@ -1,1 +1,66 @@
-<p>contact works!</p>
+<div class="flex justify-center min-h-screen px-10 py-6 bg-gray-100">
+  <p-card class="w-full max-w-5xl mt-5">
+
+    <h1 class="text-xl font-bold text-center">İletişim</h1>
+
+        <div class="text-sm text-gray-700 mt-6 text-justify">
+          Forex, VİOP ve CFD (contracts for differences) ticareti yüksek oranda kayıp riski içerir ve her yatırımcı için uygun olmayabilir. "Burada yer alan yatırım bilgi, yorumları ve analizler" bilgilendirme amaçlıdır. Yatırım danışmanlığı kapsamında değildir. Yatırım kararlarınızı kendi risk ve getiri tercihinize göre vermelisiniz. Bu nedenle, sadece burada yer alan bilgilere dayanılarak yatırım kararı verilmesi beklentilerinize uygun sonuçlar doğurmayabilir. "Eğitim içeriği veya tanıtım sayfa ve bilgilerin kullanılması sonucu yatırımcıların uğrayabileceği doğrudan ve/veya dolaylı zararlardan, maddi ve manevi zararlardan, yoksun kalınan kardan ve üç şekilde hiçbir şekilde sorumlu tutulamaz."
+        </div>
+    <p-card class="w-full max-w-xl mx-auto">
+      <div class="grid grid-cols-2 gap-x-28 gap-y-5">
+        <div>
+          <label for="name" class="block text-sm  font-medium text-gray-700 mb-2">Ad</label>
+          <input
+            type="text"
+            id="name"
+            placeholder="Adınızı Yazınız"
+            class="border border-purple-700  w-full px-3 py-2 rounded-md text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500">
+        </div>
+        <div>
+          <label for="surname" class="block text-sm  font-medium text-gray-700 mb-2">Soyad</label>
+          <input
+            type="text"
+            id="surname"
+            placeholder="Soyadınızı Yazınız"
+            class="border w-full border-purple-700 px-3 py-2 rounded-md text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500">
+        </div>
+        <div>
+          <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Telefon</label>
+          <input
+            type="tel"
+            id="phone"
+            placeholder="Telefon Numaranızı Giriniz"
+            class=" border border-purple-700 w-full px-3 py-2 rounded-md text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500">
+        </div>
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700 mb-2">E-Posta</label>
+          <input
+            type="email"
+            id="email"
+            placeholder="E-Posta Adresinizi Yazınız"
+            class="border border-purple-700 w-full px-3 py-2 rounded-md text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          >
+        </div>
+        <div class="col-span-2">
+          <label for="message" class="block text-sm font-medium text-gray-700 mb-2">Mesaj</label>
+          <textarea
+            id="message"
+            rows="4"
+            placeholder="Mesajınızı belirtiniz"
+            class="border border-purple-700 w-full px-3 py-2 rounded-md text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+        </div>
+      </div>
+      <div class="text-right p-button-sm">
+        <button
+          type="submit"
+          class="bg-purple-600 w-16 mt-4 text-white py-2 rounded-md hover:bg-purple-700 transition duration-300">
+          Kaydet
+        </button>
+      </div>
+    </p-card>
+  </p-card>
+</div>
+<footer class="bg-purple-600 text-white text-center p-4">
+  <p class="text-sm">💙 Finansal Tahmin Sistemi - Tüm Hakları Saklıdır.</p>
+  <p class="text-xs mt-2">Made with 💖 by <span class="font-semibold">Bazo</span></p>
+</footer>

@@ -1,1 +1,79 @@
-<p>compare works!</p>
+
+<div class="flex justify-center min-h-screen px-10 py-6 bg-gray-100">
+  <div class="flex flex-col items-center w-full">
+    <p-card class="w-full max-w-7xl">
+      <h1 class="flex justify-center font-bold text-xl">Hisse Karşılaştır</h1>
+      <h3 class="flex justify-center text-gray-700">İki hisse senedi seçtikten sonra butona basınız.</h3>
+      <div class="grid grid-cols-2 justify-items-center align-items-center mt-6">
+        <p-dropdown id="birinciHisse" placeholder="Hisse senedi seçiniz."></p-dropdown>
+        <p-dropdown id="ikinciHisse" placeholder="Hisse senedi seçiniz."></p-dropdown>
+      </div>
+      <p-button (onClick)="karsilastirClick()" label="Karşılaştır" class="p-button-success flex justify-center"></p-button>
+      <div *ngIf="isVisible" class="grid grid-cols-2 gap-11 mt-14">
+        <p-card id="firstCard" class="w-full bg-gray-800 text-white shadow-lg rounded-xl">
+          <ng-template pTemplate="header">
+            <p class="text-lg font-semibold text-center text-gray-700">Güncel Fiyat</p>
+          </ng-template>
+          <ng-template pTemplate="content">
+            <div class="space-y-2">
+              <div class="flex justify-between text-gray-700">
+                <span>Güncel Fiyat</span>
+                <p-badge value="0,00 ₺" severity="info"></p-badge>
+              </div>
+              <div class="flex justify-between text-gray-700">
+                <span>En Yüksek Tahmin</span>
+                <p-badge value="0,00 ₺" severity="danger"></p-badge>
+              </div>
+              <div class="flex justify-between text-gray-700">
+                <span>En Düşük Tahmin</span>
+                <p-badge value="0,00 ₺" severity="danger"></p-badge>
+              </div>
+              <div class="flex justify-between text-gray-700">
+                <span>Ort. Fiyat Tahmini</span>
+                <p-badge value="0,00 ₺" severity="secondary"></p-badge>
+              </div>
+            </div>
+          </ng-template>
+        </p-card>
+        <p-card class="w-full bg-gray-800 text-white shadow-lg rounded-xl">
+          <ng-template pTemplate="header">
+            <p class="text-lg font-semibold text-center text-gray-700">Güncel Fiyat</p>
+          </ng-template>
+          <ng-template pTemplate="content">
+            <div class="space-y-2">
+              <div class="flex justify-between text-gray-700">
+                <p-badge value="0,00 ₺" severity="info"></p-badge>
+                <span>Güncel Fiyat</span>
+              </div>
+              <div class="flex justify-between text-gray-700">
+                <p-badge value="0,00 ₺" severity="danger"></p-badge>
+                <span>En Yüksek Tahmin</span>
+
+              </div>
+              <div class="flex justify-between text-gray-700">
+
+                <p-badge value="0,00 ₺" severity="danger"></p-badge>
+                <span>En Düşük Tahmin</span>
+              </div>
+              <div class="flex justify-between text-gray-700">
+                <p-badge value="0,00 ₺" severity="secondary"></p-badge>
+                <span>Ort. Fiyat Tahmini</span>
+
+              </div>
+            </div>
+          </ng-template>
+        </p-card>
+      </div>
+    </p-card>
+
+      </div>
+
+</div>
+<footer class="bg-purple-600 text-white text-center p-4">
+  <p class="text-sm">💙 Finansal Tahmin Sistemi - Tüm Hakları Saklıdır.</p>
+  <p class="text-xs mt-2">Made with 💖 by <span class="font-semibold">Bazo</span></p>
+</footer>
+
+
+
+
