@@ -58,14 +58,12 @@
 
   <!-- Tablo Alanı -->
   <p-table 
-    [value]="stockData" 
-    [paginator]="true" 
-    [rows]="pageSize"
-    [totalRecords]="allCards.length" 
-    (onPageChange)="onPageChange($event)"
-    [responsive]="true" 
-    [resizableColumns]="true" 
-    class="p-datatable-gridlines text-center">
+  [value]="allCards" 
+  [paginator]="true" 
+  [rows]="5"
+  [responsive]="true" 
+  [resizableColumns]="true" 
+  class="p-datatable-gridlines text-center">
 
     <ng-template pTemplate="header">
       <tr>
@@ -84,9 +82,9 @@
       <tr>
         <td>{{ stock.stock_code }}</td>
         <td>{{ stock.advice_type }}</td>
-        <td>{{ stock.target_price | number: '1.2-2' }}</td>
-        <td>{{ stock.potential_return | number: '1.2-2' }}</td>
-        <td>{{ stock.close_price | number: '1.2-2' }}</td>
+        <td>{{ stock.target_price | number: "1.2-2" }}</td>
+        <td>{{ stock.potential_return | number: "1.2-2" }}</td>
+        <td>{{ stock.close_price | number: "1.2-2" }}</td>
         <td>{{ stock.institution }}</td>
         <td>{{ stock.sector }}</td>
         <td>{{ stock.advice_date }}</td>

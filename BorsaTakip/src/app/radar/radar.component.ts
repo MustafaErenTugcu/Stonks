@@ -3,69 +3,98 @@ import { RadarService } from '../services/radar.service';
 
 @Component({
   selector: 'app-radar',
-  templateUrl: './radar.component.html',
-  styleUrls: ['./radar.component.css']
+  templateUrl: './radar.component.html'
 })
 export class RadarComponent implements OnInit {
-  stockData: any[] = [];       // Tabloda gösterilen veriler (sayfalama uygulanmış)
-  allCards: any[] = [];        // API'den gelen tüm radar verisi
-  pageSize: number = 5;        // Sayfa başına gösterilecek veri sayısı
-  totalRecords: number = 0;    // Toplam veri sayısı (sayfalama için)
+  stockData: any[] = [];
+  allCards: any[] = [];
+  sectors: any[] = [];
+  adviceTypes: any[] = [];
+  institutions: any[] = [];
+  stockCodes: any[] = [];
 
-  sectors: string[] = ['Technology', 'E-Commerce', 'Automotive', 'Semiconductors'];
-  adviceTypes: string[] = ['Endeks Üstü Get.', 'Tut', 'Sat', 'Al'];
-  institutions: string[] = ['Apple', 'Amazon', 'Tesla', 'Google', 'Nvidia', 'Intel'];
-  stockCodes: string[] = ['AAPL', 'AMZN', 'TSLA', 'GOOGL', 'NVDA', 'INTC'];
+  selectedSector: string | null = null;
+  selectedAdvice: string | null = null;
+  selectedInstitution: string | null = null;
+  selectedStockCode: string | null = null;
+  startDate: Date | null = null;
+  endDate: Date | null = null;
 
-  selectedSector: string = '';
-  selectedAdvice: string = '';
-  selectedInstitution: string = '';
-  selectedStockCode: string = '';
-  startDate: any = '';
-  endDate: any = '';
+  first = 0;
+  rows = 5;
 
   constructor(private radarService: RadarService) {}
 
   ngOnInit(): void {
+    this.fetchInitialData();
     this.getRadarData();
   }
 
+  fetchInitialData(): void {
+    // Sabit değerler set edilebilir ya da istenirse backend'den çekilebilir
+    this.sectors = [
+      { label: 'Technology', value: 'Technology' },
+      { label: 'E-Commerce', value: 'E-Commerce' },
+      { label: 'Automotive', value: 'Automotive' },
+      { label: 'Semiconductors', value: 'Semiconductors' }
+    ];
+
+    this.adviceTypes = [
+      { label: 'Al', value: 'Al' },
+      { label: 'Tut', value: 'Tut' },
+      { label: 'Sat', value: 'Sat' },
+      { label: 'Endeks Üstü Get.', value: 'Endeks Üstü Get.' }
+    ];
+
+    this.institutions = [
+      { label: 'Apple', value: 'Apple' },
+      { label: 'Amazon', value: 'Amazon' },
+      { label: 'Tesla', value: 'Tesla' },
+      { label: 'Google', value: 'Google' },
+      { label: 'Nvidia', value: 'Nvidia' },
+      { label: 'Intel', value: 'Intel' }
+    ];
+
+    this.stockCodes = [
+      { label: 'AAPL', value: 'AAPL' },
+      { label: 'AMZN', value: 'AMZN' },
+      { label: 'TSLA', value: 'TSLA' },
+      { label: 'GOOGL', value: 'GOOGL' },
+      { label: 'NVDA', value: 'NVDA' },
+      { label: 'INTC', value: 'INTC' }
+    ];
+  }
+
   getRadarData(): void {
-    const formatDate = (d: any): string =>
-      d instanceof Date ? d.toISOString().split('T')[0] : d;
+    const formattedStart = this.startDate ? this.startDate.toISOString().split('T')[0] : undefined;
+    const formattedEnd = this.endDate ? this.endDate.toISOString().split('T')[0] : undefined;
 
     this.radarService.getRadarData(
-      this.selectedSector,
-      this.selectedAdvice,
-      this.selectedInstitution,
-      formatDate(this.startDate),
-      formatDate(this.endDate),
-      this.selectedStockCode
-    ).subscribe({
-      next: (data) => {
-        this.allCards = data;
-        this.totalRecords = data.length;
-        this.stockData = this.allCards.slice(0, this.pageSize);
-      },
-      error: (err) => {
-        console.error('Radar verileri alınamadı:', err);
-      }
+      this.selectedSector || undefined,
+      this.selectedAdvice || undefined,
+      this.selectedInstitution || undefined,
+      formattedStart,
+      formattedEnd,
+      this.selectedStockCode || undefined
+    ).subscribe(data => {
+      this.allCards = data;
+      this.stockData = this.allCards.slice(0, this.rows);
+      this.first = 0;
     });
   }
 
   onPageChange(event: any): void {
-    const start = event.first;
-    const end = event.first + event.rows;
-    this.stockData = this.allCards.slice(start, end);
+    this.first = event.first;
+    this.stockData = this.allCards.slice(this.first, this.first + this.rows);
   }
 
   clearFilters(): void {
-    this.selectedSector = '';
-    this.selectedAdvice = '';
-    this.selectedInstitution = '';
-    this.startDate = '';
-    this.endDate = '';
-    this.selectedStockCode = '';
+    this.selectedSector = null;
+    this.selectedAdvice = null;
+    this.selectedInstitution = null;
+    this.selectedStockCode = null;
+    this.startDate = null;
+    this.endDate = null;
     this.getRadarData();
   }
 }

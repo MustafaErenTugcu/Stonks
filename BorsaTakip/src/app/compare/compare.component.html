@@ -19,19 +19,19 @@
             <div class="space-y-2" *ngIf="stock1Data">
               <div class="flex justify-between">
                 <span>Güncel Fiyat</span>
-                <p-badge [value]="stock1Data.current_price + ' $'" severity="info"></p-badge>
+                <p-badge [value]="stock1Data.current_price?.toFixed(2) + ' $'" severity="info"></p-badge>
               </div>
               <div class="flex justify-between">
                 <span>En Yüksek Tahmin</span>
-                <p-badge [value]="stock1Data.highest_prediction + ' $'" severity="danger"></p-badge>
+                <p-badge [value]="stock1Data.highest_prediction?.toFixed(2) + ' $'" severity="danger"></p-badge>
               </div>
               <div class="flex justify-between">
                 <span>En Düşük Tahmin</span>
-                <p-badge [value]="stock1Data.lowest_prediction + ' $'" severity="danger"></p-badge>
+                <p-badge [value]="stock1Data.lowest_prediction?.toFixed(2) + ' $'" severity="danger"></p-badge>
               </div>
               <div class="flex justify-between">
                 <span>Ort. Fiyat Tahmini</span>
-                <p-badge [value]="stock1Data.average_prediction + ' $'" severity="secondary"></p-badge>
+                <p-badge [value]="stock1Data.average_prediction?.toFixed(2) + ' $'" severity="secondary"></p-badge>
               </div>
             </div>
           </ng-template>
@@ -44,19 +44,19 @@
           <ng-template pTemplate="content">
             <div class="space-y-2" *ngIf="stock2Data">
               <div class="flex justify-between">
-                <p-badge [value]="stock2Data.current_price + ' $'" severity="info"></p-badge>
+                <p-badge [value]="stock2Data.current_price?.toFixed(2) + ' $'" severity="info"></p-badge>
                 <span>Güncel Fiyat</span>
               </div>
               <div class="flex justify-between">
-                <p-badge [value]="stock2Data.highest_prediction + ' $'" severity="danger"></p-badge>
+                <p-badge [value]="stock2Data.highest_prediction?.toFixed(2) + ' $'" severity="danger"></p-badge>
                 <span>En Yüksek Tahmin</span>
               </div>
               <div class="flex justify-between">
-                <p-badge [value]="stock2Data.lowest_prediction + ' $'" severity="danger"></p-badge>
+                <p-badge [value]="stock2Data.lowest_prediction?.toFixed(2) + ' $'" severity="danger"></p-badge>
                 <span>En Düşük Tahmin</span>
               </div>
               <div class="flex justify-between">
-                <p-badge [value]="stock2Data.average_prediction + ' $'" severity="secondary"></p-badge>
+                <p-badge [value]="stock2Data.average_prediction?.toFixed(2) + ' $'" severity="secondary"></p-badge>
                 <span>Ort. Fiyat Tahmini</span>
               </div>
             </div>
