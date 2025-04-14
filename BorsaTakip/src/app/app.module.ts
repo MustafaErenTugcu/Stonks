@@ -22,6 +22,15 @@ import {PaginatorModule} from "primeng/paginator";
 import {BadgeModule} from "primeng/badge";
 import {HttpClientModule} from "@angular/common/http";
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import {DialogModule} from "primeng/dialog";
+import {SpeedDialModule} from "primeng/speeddial";
+
+import {LOCALE_ID } from '@angular/core';
+import localeTr from '@angular/common/locales/tr';
+import { registerLocaleData } from '@angular/common';
+
+registerLocaleData(localeTr);
+
 
 @NgModule({
   declarations: [
@@ -48,9 +57,15 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
     PaginatorModule,
     BadgeModule,
     HttpClientModule,
-    NoopAnimationsModule
+    NoopAnimationsModule,
+    DialogModule,
+    SpeedDialModule
   ],
-  providers: [],
+  providers: [
+    { provide: LOCALE_ID, useValue: 'tr' }
+  ]
+  ,  
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}
