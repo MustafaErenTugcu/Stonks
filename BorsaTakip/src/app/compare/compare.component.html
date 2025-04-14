@@ -5,75 +5,69 @@
       <h1 class="flex justify-center font-bold text-xl">Hisse Karşılaştır</h1>
       <h3 class="flex justify-center">İki hisse senedi seçtikten sonra butona basınız.</h3>
       <div class="grid grid-cols-2 justify-items-center align-items-center mt-6">
-        <p-dropdown id="birinciHisse" placeholder="Hisse senedi seçiniz."></p-dropdown>
-        <p-dropdown id="ikinciHisse" placeholder="Hisse senedi seçiniz."></p-dropdown>
+        <p-dropdown [options]="stockOptions" [(ngModel)]="selectedStock1" placeholder="Hisse senedi seçiniz."></p-dropdown>
+        <p-dropdown [options]="stockOptions" [(ngModel)]="selectedStock2" placeholder="Hisse senedi seçiniz."></p-dropdown>
       </div>
       <p-button (onClick)="karsilastirClick()" label="Karşılaştır" class="p-button-success flex justify-center"></p-button>
+
       <div *ngIf="isVisible" class="grid grid-cols-2 gap-11 mt-14">
         <p-card class="w-full bg-gray-800 text-white shadow-lg rounded-xl">
           <ng-template pTemplate="header">
             <p class="text-lg font-semibold text-center">Güncel Fiyat</p>
           </ng-template>
           <ng-template pTemplate="content">
-            <div class="space-y-2">
+            <div class="space-y-2" *ngIf="stock1Data">
               <div class="flex justify-between">
                 <span>Güncel Fiyat</span>
-                <p-badge value="0,00 ₺" severity="info"></p-badge>
+                <p-badge [value]="stock1Data.current_price + ' $'" severity="info"></p-badge>
               </div>
               <div class="flex justify-between">
                 <span>En Yüksek Tahmin</span>
-                <p-badge value="0,00 ₺" severity="danger"></p-badge>
+                <p-badge [value]="stock1Data.highest_prediction + ' $'" severity="danger"></p-badge>
               </div>
               <div class="flex justify-between">
                 <span>En Düşük Tahmin</span>
-                <p-badge value="0,00 ₺" severity="danger"></p-badge>
+                <p-badge [value]="stock1Data.lowest_prediction + ' $'" severity="danger"></p-badge>
               </div>
               <div class="flex justify-between">
                 <span>Ort. Fiyat Tahmini</span>
-                <p-badge value="0,00 ₺" severity="secondary"></p-badge>
+                <p-badge [value]="stock1Data.average_prediction + ' $'" severity="secondary"></p-badge>
               </div>
             </div>
           </ng-template>
         </p-card>
+
         <p-card class="w-full bg-gray-800 text-white shadow-lg rounded-xl">
           <ng-template pTemplate="header">
             <p class="text-lg font-semibold text-center">Güncel Fiyat</p>
           </ng-template>
           <ng-template pTemplate="content">
-            <div class="space-y-2">
+            <div class="space-y-2" *ngIf="stock2Data">
               <div class="flex justify-between">
-                <p-badge value="0,00 ₺" severity="info"></p-badge>
+                <p-badge [value]="stock2Data.current_price + ' $'" severity="info"></p-badge>
                 <span>Güncel Fiyat</span>
               </div>
               <div class="flex justify-between">
-                <p-badge value="0,00 ₺" severity="danger"></p-badge>
+                <p-badge [value]="stock2Data.highest_prediction + ' $'" severity="danger"></p-badge>
                 <span>En Yüksek Tahmin</span>
-
               </div>
               <div class="flex justify-between">
-
-                <p-badge value="0,00 ₺" severity="danger"></p-badge>
+                <p-badge [value]="stock2Data.lowest_prediction + ' $'" severity="danger"></p-badge>
                 <span>En Düşük Tahmin</span>
               </div>
               <div class="flex justify-between">
-                <p-badge value="0,00 ₺" severity="secondary"></p-badge>
+                <p-badge [value]="stock2Data.average_prediction + ' $'" severity="secondary"></p-badge>
                 <span>Ort. Fiyat Tahmini</span>
-
               </div>
             </div>
           </ng-template>
         </p-card>
       </div>
     </p-card>
-
-      </div>
-
+  </div>
 </div>
+
 <footer class="bg-purple-600 text-white text-center p-4">
   <p class="text-sm">💙 Finansal Tahmin Sistemi - Tüm Hakları Saklıdır.</p>
   <p class="text-xs mt-2">Made with 💖 by <span class="font-semibold">Bazo</span></p>
 </footer>
-
-
-
-

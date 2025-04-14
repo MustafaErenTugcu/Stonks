@@ -21,33 +21,34 @@
           <thead class="bg-gray-200">
           <tr>
             <th class="border text-center p-2">Sıra No</th>
-            <th class="border text-center  p-2">Senet Kodu</th>
+            <th class="border text-center p-2">Senet Kodu</th>
             <th class="border text-center p-2">Senet Adı</th>
             <th class="border text-center p-2">Hedef Fiyat Veren Kurum Sayısı</th>
             <th class="border text-center p-2">Son Kapanış</th>
             <th class="border text-center p-2">Ortalama Hedef Fiyat</th>
             <th class="border text-center p-2">Ortalama Getiri Potansiyeli (%)</th>
-            <th class="border text-center  p-2">En Yüksek Hedef Fiyat</th>
+            <th class="border text-center p-2">En Yüksek Hedef Fiyat</th>
             <th class="border text-center p-2">En Yüksek Fiyatın Getiri Potansiyeli (%)</th>
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let senet of senetler; let i = index" class="hover:bg-gray-50 transition-colors text-center">
-            <td class="p-3 border">{{ i + 1 }}</td>
-            <td class="p-3 border">{{ senet.senetKodu }}</td>
-            <td class="p-3 border">{{ senet.senetAdi }}</td>
-            <td class="p-3 border">{{ senet.hedefFiyatVerenKurumSayisi }}</td>
-            <td class="p-3 border">{{ senet.sonKapanis }}</td>
-            <td class="p-3 border">{{ senet.ortHedefFiyat }}</td>
-            <td class="p-3 border text-green-600 font-semibold">{{ senet.ortGetiriPotansiyeli }}</td>
-            <td class="p-3 border">{{ senet.enYuksekHedefFiyat }}</td>
-            <td class="p-3 border">{{ senet.enYuksekFiyatinGetiriPotansiyeli }}</td>
+          <tr *ngFor="let senet of displayedData; let i = index" class="hover:bg-gray-50 transition-colors text-center">
+            <td class="p-3 border">{{ first + i + 1 }}</td>
+            <td class="p-3 border">{{ senet.stock_code }}</td>
+            <td class="p-3 border">{{ senet.stock_name }}</td>
+            <td class="p-3 border">{{ senet.institution_count }}</td>
+            <td class="p-3 border">{{ senet.close_price }}</td>
+            <td class="p-3 border">{{ senet.avg_target_price }}</td>
+            <td class="p-3 border text-green-600 font-semibold">{{ senet.avg_potential_return }}</td>
+            <td class="p-3 border">{{ senet.highest_target_price }}</td>
+            <td class="p-3 border">{{ senet.highest_potential_return }}</td>
           </tr>
           </tbody>
         </table>
         <p-paginator
           [rows]="pageSize"
-          [totalRecords]="senetler.length"
+          [totalRecords]="featuredData.length"
+          [first]="first"
           (onPageChange)="onPageChange($event)"
           class="mt-4 flex justify-center">
         </p-paginator>
