@@ -37,7 +37,7 @@
             <td class="p-3 border">{{ senet.stock_code }}</td>
             <td class="p-3 border">{{ senet.stock_name }}</td>
             <td class="p-3 border">{{ senet.institution_count }}</td>
-            <td class="p-3 border">{{ senet.close_price }}</td>
+            <td class="p-3 border">{{ senet.close_price | number:'1.2-2' }}</td>
             <td class="p-3 border">{{ senet.avg_target_price }}</td>
             <td class="p-3 border text-green-600 font-semibold">{{ senet.avg_potential_return }}</td>
             <td class="p-3 border">{{ senet.highest_target_price }}</td>
@@ -46,12 +46,12 @@
           </tbody>
         </table>
         <p-paginator
-          [rows]="pageSize"
-          [totalRecords]="featuredData.length"
-          [first]="first"
-          (onPageChange)="onPageChange($event)"
-          class="mt-4 flex justify-center">
-        </p-paginator>
+        [first]="first"
+        [rows]="pageSize"
+        [totalRecords]="featuredData.length"
+        (onPageChange)="onPageChange($event)"
+        styleClass="mt-4"
+      />
       </div>
     </div>
   </p-card>
