@@ -1,0 +1,29 @@
+<p-dialog header="Üye Ol" [(visible)]="displayRegister" [modal]="true" [style]="{ width: '30vw' }">
+    <div class="p-fluid">
+      <div class="p-field">
+        <label for="name">Adınız:</label>
+        <input id="name" type="text" pInputText [(ngModel)]="name" placeholder="Adınız ve Soyadınız" />
+      </div>
+  
+      <div class="p-field">
+        <label for="email">E-posta:</label>
+        <input id="email" type="email" pInputText [(ngModel)]="email" placeholder="E-postanız" />
+      </div>
+  
+      <div class="p-field">
+        <label for="username">Kullanıcı Adınız:</label>
+        <input id="username" type="text" pInputText [(ngModel)]="username" placeholder="Kullanıcı adınız" />
+      </div>
+  
+      <div class="p-field">
+        <label for="password">Şifreniz:</label>
+        <input id="password" type="password" pInputText [(ngModel)]="password" placeholder="Şifreniz" />
+      </div>
+  
+      <div class="flex justify-content-end mt-4 gap-2">
+        <button type="button" pButton label="Kapat" class="p-button p-button-secondary" (click)="closeDialog()"></button>
+        <button type="button" pButton label="Kayıt Ol" class="p-button p-button-primary" (click)="register()"></button>
+      </div>
+    </div>
+  </p-dialog>
+  

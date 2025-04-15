@@ -28,6 +28,16 @@ import {SpeedDialModule} from "primeng/speeddial";
 import {LOCALE_ID } from '@angular/core';
 import localeTr from '@angular/common/locales/tr';
 import { registerLocaleData } from '@angular/common';
+import { LoginComponent } from './auth/login/login.component';
+import { RegisterComponent } from './auth/register/register.component';
+import { ButtonModule } from 'primeng/button';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { MenuModule } from 'primeng/menu';
+
+
+
+
 
 registerLocaleData(localeTr);
 
@@ -41,7 +51,9 @@ registerLocaleData(localeTr);
     CompareComponent,
     HighlightsComponent,
     MarketComponent,
-    ContactComponent
+    ContactComponent,
+    LoginComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
@@ -59,10 +71,15 @@ registerLocaleData(localeTr);
     HttpClientModule,
     NoopAnimationsModule,
     DialogModule,
-    SpeedDialModule
+    SpeedDialModule,
+    ButtonModule,
+    ToastModule,
+    MenuModule
+
   ],
   providers: [
-    { provide: LOCALE_ID, useValue: 'tr' }
+    { provide: LOCALE_ID, useValue: 'tr' },
+    MessageService
   ]
   ,  
   bootstrap: [AppComponent]

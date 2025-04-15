@@ -1,78 +1,107 @@
+<p-toast></p-toast>
+
 <div class="bg-purple-600 text-white p-4">
-<nav class="bg-purple-600 p-4 flex justify-between items-center text-white">
-  <div class="text-lg font-semibold">Finansal Tahmin Sistemi</div>
-  <div>
-    <div class="flex gap-x-3 mr-8">
-      <button class="bg-blue-800 p-2 rounded-md" (click)="ProfilDialog()">Oturum Aç</button>
-      <button class="bg-green-700 p-2 rounded-md" (click)="openRegisterDialog()">Üye Ol</button>
-      <button class="bg-gray-700 text-white p-2 rounded-md" (click)="toggleDarkMode()">
-        <i class="pi pi-moon" *ngIf="!isDarkMode"></i> <!-- Ay ikonu -->
-        <i class="pi pi-sun" *ngIf="isDarkMode"></i>   <!-- Güneş ikonu -->
-      </button>
+  <nav class="bg-purple-600 p-4 flex justify-between items-center text-white">
+    <div class="text-lg font-semibold">Finansal Tahmin Sistemi</div>
+    <div>
+      <div class="flex gap-x-3 mr-8">
+        <!-- GİRİŞ YAPMIŞSA: Kullanıcı adı ve çıkış -->
+        <ng-container *ngIf="isLoggedIn; else guestButtons">
+          <p-menu #userMenu [popup]="true" [model]="[{ label: 'Çıkış Yap', icon: 'pi pi-sign-out', command: logout }]"></p-menu>
+          <button 
+            pButton 
+            class="bg-blue-800 p-2 rounded-md" 
+            type="button" 
+            (click)="userMenu.toggle($event)">
+            Merhaba, {{ loggedInUser }}
+          </button>
+        </ng-container>
+
+        <!-- GİRİŞ YAPMAMIŞSA: Oturum Aç & Üye Ol -->
+        <ng-template #guestButtons>
+          <button class="bg-blue-800 p-2 rounded-md" (click)="ProfilDialog()">Oturum Aç</button>
+          <button class="bg-green-700 p-2 rounded-md" (click)="openRegisterDialog()">Üye Ol</button>
+        </ng-template>
+
+        <!-- Tema & Paylaşım -->
+        <button class="bg-gray-700 text-white p-2 rounded-md" (click)="toggleDarkMode()">
+          <i class="pi pi-moon" *ngIf="!isDarkMode"></i>
+          <i class="pi pi-sun" *ngIf="isDarkMode"></i>
+        </button>
         <p-speedDial [model]="items" direction="down" showIcon="pi pi-share-alt" hideIcon="pi pi-times"></p-speedDial>
+      </div>
+
+      <!-- Giriş Yap Dialog -->
+      <p-dialog [(visible)]="isProfileVisible" [modal]="true" [closable]="true" [style]="{width: '30vw'}">
+        <ng-template pTemplate="header">
+          <h2>Oturum Aç</h2>
+        </ng-template>
+        <ng-template pTemplate="content" class="">
+          <div class="flex flex-col gap-y-4 p-4">
+            <div class="flex items-center gap-x-4">
+              <label class="w-40 text-right font-medium">Kullanıcı Adınız:</label>
+              <input [(ngModel)]="username" placeholder="Kullanıcı adınız" type="text" class="border p-2 rounded-md">
+            </div>
+            <div class="flex items-center gap-x-4">
+              <label class="w-40 text-right font-medium">Şifreniz:</label>
+              <input [(ngModel)]="password" type="password" placeholder="Şifreniz" class="border p-2 rounded-md">
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+          <div class="flex justify-between w-full">
+            <button pButton label="Kapat" icon="pi pi-times" (click)="closeDialog()" class="p-button-secondary"></button>
+            <button pButton label="Giriş Yap" icon="pi pi-sign-in" class="p-button-success ml-2" (click)="loginUser()"></button>
+          </div>
+        </ng-template>
+      </p-dialog>
+
+      <!-- Üye Ol Dialog -->
+      <p-dialog [(visible)]="isUyeOlVisible" [modal]="true" [closable]="true" [style]="{width: '30vw'}">
+        <ng-template pTemplate="header">
+          <h2>Üye Ol</h2>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <div class="flex flex-col gap-y-4 p-4">
+            <div class="flex items-center gap-x-4">
+              <label class="w-40 text-right font-medium">Adınız:</label>
+              <input [(ngModel)]="name" placeholder="Adınız ve Soyadınız" type="text" class="border p-2 rounded-md">
+            </div>
+            <div class="flex items-center gap-x-4">
+              <label class="w-40 text-right font-medium">E-posta:</label>
+              <input [(ngModel)]="email" placeholder="E-postanız" type="email" class="border p-2 rounded-md">
+            </div>
+            <div class="flex items-center gap-x-4">
+              <label class="w-40 text-right font-medium">Kullanıcı Adınız:</label>
+              <input [(ngModel)]="username" type="text" placeholder="Kullanıcı adınız" class="border p-2 rounded-md">
+            </div>
+            <div class="flex items-center gap-x-4">
+              <label class="w-40 text-right font-medium">Şifreniz:</label>
+              <input [(ngModel)]="password" type="password" placeholder="Şifreniz" class="border p-2 rounded-md">
+            </div>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <div class="flex justify-between w-full">
+            <button pButton label="Kapat" icon="pi pi-times" (click)="closeRegisterDialog()" class="p-button-secondary"></button>
+            <button pButton label="Kayıt Ol" icon="pi pi-user-plus" class="p-button-success ml-2" (click)="registerUser()"></button>
+          </div>
+        </ng-template>
+      </p-dialog>
     </div>
+  </nav>
 
-    <p-dialog [(visible)]="isProfileVisible" [modal]="true" [closable]="true" [style]="{width: '30vw'}">
-      <ng-template pTemplate="header">
-        <h2>Oturum Aç</h2>
-      </ng-template>
-      <ng-template pTemplate="content" class="">
-        <div class="flex flex-col gap-y-4 p-4">
-          <div class="flex items-center gap-x-4">
-            <label class="w-40 text-right font-medium">Kullanıcı Adınız:</label>
-            <input placeholder="Kullanıcı adınız" type="text" class="border p-2 rounded-md">
-          </div>
-          <div class="flex items-center gap-x-4">
-            <label class="w-40 text-right font-medium">Şifreniz:</label>
-            <input type="password" placeholder="Şifreniz" class="border p-2 rounded-md">
-          </div>
-        </div>
-      </ng-template>
-
-      <ng-template pTemplate="footer">
-        <button pButton label="Kapat" icon="pi pi-times" (click)="closeDialog()"></button>
-      </ng-template>
-    </p-dialog>
-    <p-dialog [(visible)]="isUyeOlVisible" [modal]="true" [closable]="true" [style]="{width: '30vw'}">
-      <ng-template pTemplate="header">
-        <h2>Üye Ol</h2>
-      </ng-template>
-      <ng-template pTemplate="content">
-        <div class="flex flex-col gap-y-4 p-4">
-          <div class="flex items-center gap-x-4">
-            <label class="w-40 text-right font-medium">Adınız:</label>
-            <input placeholder="Adınız ve Soyadınız" type="text" class="border p-2 rounded-md">
-          </div>
-          <div class="flex items-center gap-x-4">
-            <label class="w-40 text-right font-medium">E-posta:</label>
-            <input placeholder="E-postanız" type="email" class="border p-2 rounded-md">
-          </div>
-          <div class="flex items-center gap-x-4">
-            <label class="w-40 text-right font-medium">Kullanıcı Adınız:</label>
-            <input type="text" placeholder="Kullanıcı adınız" class="border p-2 rounded-md">
-          </div>
-          <div class="flex items-center gap-x-4">
-            <label class="w-40 text-right font-medium">Şifreniz:</label>
-            <input type="password" placeholder="Şifreniz" class="border p-2 rounded-md">
-          </div>
-        </div>
-      </ng-template>
-      <ng-template pTemplate="footer">
-        <button pButton label="Kapat" icon="pi pi-times" (click)="closeRegisterDialog()"></button>
-      </ng-template>
-    </p-dialog>
-  </div>
-</nav>
-
-<nav class="navigation flex justify-center">
-  <a routerLink="/" class="text-lg hover:bg-blue-800 px-4 py-2 rounded-md">Ana Sayfa</a>
-  <a routerLink="/hisselerimiz" class="text-lg hover:bg-blue-800 px-4 py-2 rounded-md">Kurumlar</a>
-  <a routerLink="/radar" class="text-lg hover:bg-blue-800 px-4 py-2 rounded-md">Radar</a>
-  <a routerLink="/hisse-karşılaştır" class="text-lg hover:bg-blue-800 px-4 py-2 rounded-md">Hisse Karşılaştır</a>
-  <a routerLink="/öne-çıkanlar" class="text-lg hover:bg-blue-800 px-4 py-2 rounded-md">Öne Çıkanlar</a>
-  <a routerLink="/piyasa" class="text-lg hover:bg-blue-800 px-4 py-2 rounded-md">Piyasa</a>
-  <a routerLink="/iletisim" class="text-lg hover:bg-blue-800 px-4 py-2 rounded-md">İletişim</a>
-</nav>
+  <!-- Navigation -->
+  <nav class="navigation flex justify-center">
+    <a routerLink="/" class="text-lg hover:bg-blue-800 px-4 py-2 rounded-md">Ana Sayfa</a>
+    <a routerLink="/hisselerimiz" class="text-lg hover:bg-blue-800 px-4 py-2 rounded-md">Kurumlar</a>
+    <a routerLink="/radar" class="text-lg hover:bg-blue-800 px-4 py-2 rounded-md">Radar</a>
+    <a routerLink="/hisse-karşılaştır" class="text-lg hover:bg-blue-800 px-4 py-2 rounded-md">Hisse Karşılaştır</a>
+    <a routerLink="/öne-çıkanlar" class="text-lg hover:bg-blue-800 px-4 py-2 rounded-md">Öne Çıkanlar</a>
+    <a routerLink="/piyasa" class="text-lg hover:bg-blue-800 px-4 py-2 rounded-md">Piyasa</a>
+    <a routerLink="/iletisim" class="text-lg hover:bg-blue-800 px-4 py-2 rounded-md">İletişim</a>
+  </nav>
 </div>
 
 <router-outlet></router-outlet>

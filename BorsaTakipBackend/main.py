@@ -15,6 +15,7 @@ from ta.momentum import RSIIndicator
 from ta.trend import MACD
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import LSTM, Dense
+from fastapi import HTTPException
 
 app = FastAPI()
 
@@ -71,6 +72,27 @@ CREATE TABLE IF NOT EXISTS featured_stocks (
 )
 ''')
 conn.commit()
+# Kullanıcı tablosunu oluştur
+c.execute('''
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    full_name TEXT,
+    email TEXT UNIQUE,
+    username TEXT UNIQUE,
+    password TEXT
+)
+''')
+class RegisterRequest(BaseModel):
+    full_name: str
+    email: str
+    username: str
+    password: str
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+
 
 class StockFilterRequest(BaseModel):
     symbol: str
@@ -105,6 +127,45 @@ model_dir = "models"
 os.makedirs(model_dir, exist_ok=True)
 
 advice_options = ["Endeks Üstü Get.", "Tut", "Sat", "Al"]
+
+@app.post("/register")
+def register_user(user: RegisterRequest):
+    try:
+        with sqlite3.connect(DB_NAME) as conn:
+            c = conn.cursor()
+            c.execute("SELECT * FROM users WHERE username = ?", (user.username,))
+            if c.fetchone():
+                raise HTTPException(status_code=400, detail="Kullanıcı adı zaten kayıtlı.")
+
+            c.execute(
+                "INSERT INTO users (full_name, email, username, password) VALUES (?, ?, ?, ?)",
+                (user.full_name, user.email, user.username, user.password)
+            )
+            conn.commit()
+        return {"message": "Kayıt başarıyla oluşturuldu"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+
+@app.post("/login")
+def login(user: LoginRequest):
+    print(f"Giriş denemesi: {user.username} {user.password}")
+    try:
+        with sqlite3.connect("stonks.db") as conn:
+            c = conn.cursor()
+            c.execute("SELECT * FROM users WHERE username=? AND password=?", (user.username, user.password))
+            result = c.fetchone()
+            print("Sonuç:", result)
+            if result is None:
+                print("Giriş hatası oluşturuluyor...")
+                raise HTTPException(status_code=401, detail="Kullanıcı adı veya şifre hatalı.")
+            return {"message": "Giriş başarılı", "username": user.username}
+    except HTTPException as http_exc:
+        raise http_exc
+    except Exception as e:
+        print("Beklenmeyen hata:", str(e))
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.on_event("startup")
 def generate_initial_recommendations():
