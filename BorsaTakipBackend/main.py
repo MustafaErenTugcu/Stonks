@@ -16,8 +16,14 @@ from ta.trend import MACD
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import LSTM, Dense
 from fastapi import HTTPException
-
+import time
+import requests
+from curl_cffi import  requests
 app = FastAPI()
+
+session = requests.Session(impersonate="safari") # Using curl_cffi for better compatibility with yfinance
+
+
 
 # CORS setup
 app.add_middleware(
@@ -104,15 +110,162 @@ class PredictionResponse(BaseModel):
     symbol: str
     predicted_prices: List[float]
 
-institutions = ["Apple", "Amazon", "Tesla", "Google", "Nvidia", "Intel"]
+institutions = ["Apple", "Amazon", "Tesla", "Google", "Nvidia", "Intel", "Meta", "Microsoft", "Netflix", "Samsung", "Sony", "Alibaba", "Baidu", "Tencent", "Adobe", "Salesforce", "Oracle", "IBM",
+                 "Zoom", "Spotify", "Twitter", "Snap", "Pinterest", "LinkedIn", "Reddit", "TikTok", "ByteDance", "Airbnb", "Uber", "Lyft", "DoorDash", "Robinhood", "Coinbase",
+                 "Square", "PayPal", "Stripe", "Shopify", "eBay", "Walmart", "Target", "Costco", "Home Depot", "Lowe's", "Best Buy", "CVS Health", "Walgreens Boots Alliance",
+                 "Pfizer", "Johnson & Johnson", "Merck", "Moderna", "AstraZeneca", "Roche", "Novartis", "GlaxoSmithKline", "Sanofi", "Bristol-Myers Squibb", "AbbVie",
+                 "ExxonMobil", "Chevron", "BP", "Shell", "TotalEnergies", "ConocoPhillips", "Eni", "Equinor", "Repsol", "Petrobras", "Gazprom", "Rosneft",
+                 "Volkswagen", "BMW", "Daimler", "Ford", "General Motors", "Honda", "Toyota", "Hyundai", "Kia", "Nissan", "Mazda", "Subaru",
+                 "LG Electronics", "Panasonic", "Toshiba", "Hitachi", "Fujitsu", "NEC", "Sharp", "Canon", "Nikon", "Olympus", "Ricoh",
+                 "Siemens", "Bosch", "Philips", "Schneider Electric", "ABB", "Honeywell", "General Electric", "Emerson Electric", "Rockwell Automation",
+                 "3M", "DuPont", "BASF", "Dow Chemical", "ExxonMobil Chemical", "LyondellBasell", "SABIC", "Formosa Plastics", "LG Chem",
+                 "SK Innovation", "Mitsubishi Chemical", "Asahi Kasei", "Sumitomo Chemical", "Toray Industries", "Nippon Steel", "JFE Holdings",
+                 "ArcelorMittal", "Nucor", "United States Steel", "Steel Dynamics", "Cleveland-Cliffs", "AK Steel", "Tata Steel", "Thyssenkrupp",
+                 "Rio Tinto", "BHP", "Vale", "Anglo American", "Glencore", "Freeport-McMoRan", "Newmont Corporation", "Barrick Gold",
+                 "Southern Copper", "First Quantum Minerals", "Teck Resources", "Antofagasta", "China Molybdenum", "China Northern Rare Earth Group"]
+
 symbols_info = {
     "Apple": "AAPL",
     "Amazon": "AMZN",
     "Tesla": "TSLA",
     "Google": "GOOGL",
     "Nvidia": "NVDA",
-    "Intel": "INTC"
+    "Intel": "INTC",
+    "Meta": "META",
+    "Microsoft": "MSFT",
+    "Netflix": "NFLX",
+    "Samsung": "005930.KS",  # Samsung Electronics
+    "Sony": "6758.T",  # Sony Group Corporation
+    "Alibaba": "BABA",
+    "Baidu": "BIDU",
+    "Tencent": "0700.HK",  # Tencent Holdings
+    "Adobe": "ADBE",
+    "Salesforce": "CRM",
+    "Oracle": "ORCL",
+    "IBM": "IBM",
+    "Zoom": "ZM",
+    "Spotify": "SPOT",
+    "Twitter": "TWTR",  # Twitter, Inc. (Note: Twitter has been rebranded to X)
+    "Snap": "SNAP",
+    "Pinterest": "PINS",
+    "LinkedIn": "MSFT",  # LinkedIn is owned by Microsoft
+    "Reddit": "REDDIT",  # Reddit is not publicly traded, placeholder
+    "TikTok": "BYTEDANCE",  # TikTok is owned by ByteDance, which is not publicly traded
+    "ByteDance": "BYTEDANCE",  # ByteDance is not publicly traded, placeholder
+    "Airbnb": "ABNB",
+    "Uber": "UBER",
+    "Lyft": "LYFT",
+    "DoorDash": "DASH",
+    "Robinhood": "HOOD",
+    "Coinbase": "COIN",
+    "Square": "SQ",  # Now known as Block, Inc.
+    "PayPal": "PYPL",
+    "Stripe": "STRIPE",  # Stripe is not publicly traded, placeholder
+    "Shopify": "SHOP",
+    "eBay": "EBAY",
+    "Walmart": "WMT",
+    "Target": "TGT",
+    "Costco": "COST",
+    "Home Depot": "HD",
+    "Lowe's": "LOW",
+    "Best Buy": "BBY",
+    "CVS Health": "CVS",
+    "Walgreens Boots Alliance": "WBA",
+    "Pfizer": "PFE",
+    "Johnson & Johnson": "JNJ",
+    "Merck": "MRK",
+    "Moderna": "MRNA",
+    "AstraZeneca": "AZN",  # AstraZeneca PLC
+    "Roche": "ROG.SW",  # Roche Holding AG
+    "Novartis": "NVS",
+    "GlaxoSmithKline": "GSK",  # GlaxoSmithKline PLC
+    "Sanofi": "SAN.PA",  # Sanofi S.A.
+    "Bristol-Myers Squibb": "BMY",
+    "AbbVie": "ABBV",
+    "ExxonMobil": "XOM",
+    "Chevron": "CVX",
+    "BP": "BP",  # BP PLC
+    "Shell": "SHEL",  # Shell plc
+    "TotalEnergies": "TOT",  # TotalEnergies SE
+    "ConocoPhillips": "COP",
+    "Eni": "E",  # Eni S.p.A.
+    "Equinor": "EQNR",  # Equinor ASA
+    "Repsol": "REP.MC",  # Repsol S.A.
+    "Petrobras": "PBR",  # Petróleo Brasileiro S.A.
+    "Gazprom": "GAZP.ME",  # Gazprom PAO
+    "Rosneft": "ROSN.ME",  # Rosneft Oil Company
+    "Volkswagen": "VOW3.DE",  # Volkswagen AG
+    "BMW": "BMW.DE",  # Bayerische Motoren Werke AG
+    "Daimler": "DAI.DE",  # Daimler AG
+    "Ford": "F",
+    "General Motors": "GM",
+    "Honda": "HMC",  # Honda Motor Co., Ltd.
+    "Toyota": "TM",  # Toyota Motor Corporation
+    "Hyundai": "005380.KS",  # Hyundai Motor Company
+    "Kia": "000270.KS",  # Kia Corporation
+    "Nissan": "NSANY",  # Nissan Motor Co., Ltd.
+    "Mazda": "MZDAY",  # Mazda Motor Corporation
+    "Subaru": "FUJHY",  # Subaru Corporation
+    "LG Electronics": "066570.KS",  # LG Electronics Inc.
+    "Panasonic": "6752.T",  # Panasonic Holdings Corporation
+    "Toshiba": "6502.T",  # Toshiba Corporation
+    "Hitachi": "6501.T",  # Hitachi, Ltd.
+    "Fujitsu": "6702.T",  # Fujitsu Limited
+    "NEC": "6701.T",  # NEC Corporation
+    "Sharp": "6753.T",  # Sharp Corporation
+    "Canon": "CAJ",  # Canon Inc.
+    "Nikon": "NINOY",  # Nikon Corporation
+    "Olympus": "OCPNY",  # Olympus Corporation
+    "Ricoh": "RICOY",  # Ricoh Company, Ltd.
+    "Siemens": "SIE.DE",  # Siemens AG
+    "Bosch": "BOSCHLTD.NS",  # Bosch Limited (India)
+    "Philips": "PHIA.AS",  # Koninklijke Philips N.V.
+    "Schneider Electric": "SU.PA",  # Schneider Electric SE
+    "ABB": "ABB",  # ABB Ltd
+    "Honeywell": "HON",  # Honeywell International Inc.
+    "General Electric": "GE",  # General Electric Company
+    "Emerson Electric": "EMR",  # Emerson Electric Co.
+    "Rockwell Automation": "ROK",  # Rockwell Automation, Inc.
+    "3M": "MMM",  # 3M Company
+    "DuPont": "DD",  # DuPont de Nemours, Inc.
+    "BASF": "BAS.DE",  # BASF SE
+    "Dow Chemical": "DOW",  # Dow Inc.
+    "ExxonMobil Chemical": "XOM",  # ExxonMobil's chemical division is part of ExxonMobil
+    "LyondellBasell": "LYB",  # LyondellBasell Industries N.V.
+    "SABIC": "2010.SR",  # Saudi Basic Industries Corporation
+    "Formosa Plastics": "1301.TW",  # Formosa Plastics Corporation
+    "LG Chem": "051910.KS",  # LG Chem, Ltd.
+    "SK Innovation": "096770.KS",  # SK Innovation Co., Ltd.
+    "Mitsubishi Chemical": "4188.T",  # Mitsubishi Chemical Group Corporation
+    "Asahi Kasei": "3407.T",  # Asahi Kasei Corporation
+    "Sumitomo Chemical": "4005.T",  # Sumitomo Chemical Co., Ltd.
+    "Toray Industries": "3402.T",  # Toray Industries, Inc.
+    "Nippon Steel": "5401.T",  # Nippon Steel Corporation
+    "JFE Holdings": "5411.T",  # JFE Holdings, Inc.
+    "ArcelorMittal": "MT",  # ArcelorMittal S.A.
+    "Nucor": "NUE",  # Nucor Corporation
+    "United States Steel": "X",  # United States Steel Corporation
+    "Steel Dynamics": "STLD",  # Steel Dynamics, Inc.
+    "Cleveland-Cliffs": "CLF",  # Cleveland-Cliffs Inc.
+    "AK Steel": "AKS",  # AK Steel Holding Corporation (now part of Cleveland-Cliffs)
+    "Tata Steel": "TATASTEEL.NS",  # Tata Steel Limited
+    "Thyssenkrupp": "TKAG.DE",  # Thyssenkrupp AG
+    "Rio Tinto": "RIO",  # Rio Tinto Group
+    "BHP": "BHP",  # BHP Group Limited
+    "Vale": "VALE",  # Vale S.A.
+    "Anglo American": "AAL.L",  # Anglo American plc
+    "Glencore": "GLEN.L",  # Glencore plc
+    "Freeport-McMoRan": "FCX",  # Freeport-McMoRan Inc.
+    "Newmont Corporation": "NEM",  # Newmont Corporation
+    "Barrick Gold": "GOLD",  # Barrick Gold Corporation
+    "Southern Copper": "SCCO",  # Southern Copper Corporation
+    "First Quantum Minerals": "FM.TO",  # First Quantum Minerals Ltd.
+    "Teck Resources": "TECK",  # Teck Resources Limited
+    "Antofagasta": "ANTO.L",  # Antofagasta plc
+    "China Molybdenum": "3993.HK",  # China Molybdenum Co., Ltd.
+    "China Northern Rare Earth Group": "600111.SS",  # China Northern Rare Earth Group High-Tech Co., Ltd.
 }
+
 
 symbol_to_sector = {
     "AAPL": "Technology",
@@ -120,8 +273,142 @@ symbol_to_sector = {
     "TSLA": "Automotive",
     "GOOGL": "Technology",
     "NVDA": "Semiconductors",
-    "INTC": "Semiconductors"
+    "INTC": "Semiconductors",
+    "NFLX": "Entertainment",
+    "META": "Social Media",
+    "MSFT": "Technology",
+    "005930.KS": "Electronics",  # Samsung Electronics
+    "6758.T": "Electronics",  # Sony Group Corporation
+    "BABA": "E-Commerce",
+    "BIDU": "Technology",
+    "0700.HK": "Technology",  # Tencent Holdings
+    "ADBE": "Software",
+    "CRM": "Software",
+    "ORCL": "Software",
+    "IBM": "Technology",
+    "ZM": "Communication Services",
+    "SPOT": "Entertainment",
+    "TWTR": "Social Media",  # Twitter, Inc. (Note: Twitter has been rebranded to X)
+    "SNAP": "Social Media",
+    "PINS": "Social Media",
+    "ABNB": "Travel",
+    "UBER": "Transportation",
+    "LYFT": "Transportation",
+    "DASH": "Food Delivery",
+    "HOOD": "Finance",
+    "COIN": "Cryptocurrency",
+    "SQ": "Finance",  # Now known as Block, Inc.
+    "PYPL": "Finance",
+    "SHOP": "E-Commerce",
+    "EBAY": "E-Commerce",
+    "WMT": "Retail",
+    "TGT": "Retail",
+    "COST": "Retail",
+    "HD": "Retail",
+    "LOW": "Retail",
+    "BBY": "Retail",
+    "CVS": "Healthcare",
+    "WBA": "Healthcare",
+    "PFE": "Pharmaceuticals",
+    "JNJ": "Pharmaceuticals",
+    "MRK": "Pharmaceuticals",
+    "MRNA": "Biotechnology",
+    "AZN": "Pharmaceuticals",  # AstraZeneca PLC
+    "ROG.SW": "Pharmaceuticals",  # Roche Holding AG
+    "NVS": "Pharmaceuticals",
+    "GSK": "Pharmaceuticals",  # GlaxoSmithKline PLC
+    "SAN.PA": "Pharmaceuticals",  # Sanofi S.A.
+    "BMY": "Pharmaceuticals",
+    "ABBV": "Pharmaceuticals",
+    "XOM": "Energy",
+    "CVX": "Energy",
+    "BP": "Energy",  # BP PLC
+    "SHEL": "Energy",  # Shell plc
+    "TOT": "Energy",  # TotalEnergies SE
+    "COP": "Energy",  # ConocoPhillips
+    "E": "Energy",  # Eni S.p.A.
+    "EQNR": "Energy",  # Equinor ASA
+    "REP.MC": "Energy",  # Repsol S.A.
+    "PBR": "Energy",  # Petróleo Brasileiro S.A.
+    "GAZP.ME": "Energy",  # Gazprom PAO
+    "ROSN.ME": "Energy",  # Rosneft Oil Company
+    "VOW3.DE": "Automotive",  # Volkswagen AG
+    "BMW.DE": "Automotive",  # Bayerische Motoren Werke AG
+    "DAI.DE": "Automotive",  # Daimler AG
+    "F": "Automotive",
+    "GM": "Automotive",
+    "HMC": "Automotive",  # Honda Motor Co., Ltd.
+    "TM": "Automotive",  # Toyota Motor Corporation
+    "005380.KS": "Automotive",  # Hyundai Motor Company
+    "000270.KS": "Automotive",  # Kia Corporation
+    "NSANY": "Automotive",  # Nissan Motor Co., Ltd.
+    "MZDAY": "Automotive",  # Mazda Motor Corporation
+    "FUJHY": "Automotive",  # Subaru Corporation
+    "066570.KS": "Electronics",  # LG Electronics Inc.
+    "6752.T": "Electronics",  # Panasonic Holdings Corporation
+    "6502.T": "Electronics",  # Toshiba Corporation
+    "6501.T": "Electronics",  # Hitachi, Ltd.
+    "6702.T": "Electronics",  # Fujitsu Limited
+    "6701.T": "Electronics",  # NEC Corporation
+    "6753.T": "Electronics",  # Sharp Corporation
+    "CAJ": "Electronics",  # Canon Inc.
+    "NINOY": "Electronics",  # Nikon Corporation
+    "OCPNY": "Electronics",  # Olympus Corporation
+    "RICOY": "Electronics",  # Ricoh Company, Ltd.
+    "SIE.DE": "Electronics",  # Siemens AG
+    "BOSCHLTD.NS": "Electronics",  # Bosch Limited (India)
+    "PHIA.AS": "Electronics",  # Koninklijke Philips N.V.
+    "SU.PA": "Electronics",  # Schneider Electric SE
+    "ABB": "Electronics",  # ABB Ltd
+    "HON": "Electronics",  # Honeywell International Inc.
+    "GE": "Electronics",  # General Electric Company
+    "EMR": "Electronics",  # Emerson Electric Co.
+    "ROK": "Electronics",  # Rockwell Automation, Inc.
+    "MMM": "Electronics",  # 3M Company
+    "DD": "Chemicals",  # DuPont de Nemours, Inc.
+    "BAS.DE": "Chemicals",  # BASF SE
+    "DOW": "Chemicals",  # Dow Inc.
+    "LYB": "Chemicals",  # LyondellBasell Industries N.V.
+    "2010.SR": "Chemicals",  # Saudi Basic Industries Corporation
+    "1301.TW": "Chemicals",  # Formosa Plastics Corporation
+    "051910.KS": "Chemicals",  # LG Chem, Ltd.
+    "096770.KS": "Chemicals",  # SK Innovation Co., Ltd.
+    "4188.T": "Chemicals",  # Mitsubishi Chemical Group Corporation
+    "3407.T": "Chemicals",  # Asahi Kasei Corporation
+    "4005.T": "Chemicals",  # Sumitomo Chemical Co., Ltd.
+    
+    "3402.T": "Chemicals",  # Toray Industries, Inc.
+    "5401.T": "Metals",  # Nippon Steel Corporation
+    "5411.T": "Metals",  # JFE Holdings, Inc.
+    "MT": "Metals",  # ArcelorMittal S.A.
+    "NUE": "Metals",  # Nucor Corporation
+    "X": "Metals",  # United States Steel Corporation
+    "STLD": "Metals",  # Steel Dynamics, Inc.
+    "CLF": "Metals",  # Cleveland-Cliffs Inc.
+    "AKS": "Metals",  # AK Steel Holding Corporation (now part of Cleveland-Cliffs)
+    "TATASTEEL.NS": "Metals",  # Tata Steel Limited
+    "TKAG.DE": "Metals",  # Thyssenkrupp AG
+    "RIO": "Metals",  # Rio Tinto Group
+    "BHP": "Metals",  # BHP Group Limited
+    "VALE": "Metals",  # Vale S.A.
+    "AAL.L": "Metals",  # Anglo American plc
+    "GLEN.L": "Metals",  # Glencore plc
+    "FCX": "Metals",  # Freeport-McMoRan Inc.
+    "NEM": "Metals",  # Newmont Corporation
+    "GOLD": "Metals",  # Barrick Gold Corporation
+    "SCCO": "Metals",  # Southern Copper Corporation
+    "FM.TO": "Metals",  # First Quantum Minerals Ltd.
+    "TECK": "Metals",  # Teck Resources Limited
+    "ANTO.L": "Metals",  # Antofagasta plc
+    "3993.HK": "Metals",  # China Molybdenum Co., Ltd.
+    "600111.SS": "Metals",  # China Northern Rare Earth Group High-Tech Co., Ltd.
+
 }
+# AddStockRequest: yeni hisse ekleme için istek modeli
+class AddStockRequest(BaseModel):
+    name: str       
+    symbol: str     
+    sector: str     
 
 model_dir = "models"
 os.makedirs(model_dir, exist_ok=True)
@@ -179,13 +466,26 @@ def generate_initial_recommendations():
         return
 
     for symbol in symbols_info.values():
-        dummy_request = StockFilterRequest(
-            symbol=symbol,
-            start_date=datetime.today().date().replace(year=datetime.today().year - 1),
-            end_date=datetime.today().date(),
-            days_forward=7
-        )
-        predict_stock(dummy_request)
+        try:
+            print(f"{symbol} için model kontrol ediliyor...")
+            scaler_path = os.path.join(model_dir, f"{symbol}_scaler.save")
+            model_path = os.path.join(model_dir, f"{symbol}_lstm.h5")
+            if not os.path.exists(scaler_path) or not os.path.exists(model_path):
+                print(f"{symbol} için model veya scaler yok, eğitim başlatılıyor.")
+                train_model_for_symbol(symbol)
+            else:
+                print(f"{symbol} için model ve scaler zaten mevcut.")
+
+            dummy_request = StockFilterRequest(
+                symbol=symbol,
+                start_date=datetime.today().date().replace(year=datetime.today().year - 1),
+                end_date=datetime.today().date(),
+                days_forward=7
+            )
+            generate_prediction_and_save(dummy_request)
+            time.sleep(7)  # API limitine takılmamak için
+        except Exception as e:
+            print(f"{symbol} startup işleminde hata: {e}")
 
 @app.get("/institutions")
 def get_institutions():
@@ -207,7 +507,7 @@ def list_stocks():
 @app.get("/stocks/data")
 def get_stock_data(symbol: str, start: str, end: str):
     try:
-        df = yf.download(symbol, start=start, end=end)
+        df = yf.download(symbol, start=start, end=end,session=session)
         df.reset_index(inplace=True)
         return df.to_dict(orient="records")
     except Exception as e:
@@ -279,7 +579,7 @@ def get_featured_stocks():
 @app.post("/stocks/predict", response_model=PredictionResponse)
 def predict_stock(request: StockFilterRequest):
     try:
-        history = yf.download(request.symbol, start=request.start_date, end=request.end_date)
+        history = yf.download(request.symbol, start=request.start_date, end=request.end_date, session=session)
         if history.empty or len(history) < 100:
             return {"symbol": request.symbol, "predicted_prices": []}
 
@@ -288,6 +588,8 @@ def predict_stock(request: StockFilterRequest):
         df['RSI'] = RSIIndicator(close=close_series).rsi().values
         df['MACD'] = MACD(close=close_series).macd().values
         df = df.dropna()
+        
+        print(f"{request.symbol} için veri uzunluğu (history): {len(history)}, işlenmiş veri uzunluğu (df): {len(df)}")
 
         if len(df) < 100:
             return {"symbol": request.symbol, "predicted_prices": []}
@@ -295,6 +597,7 @@ def predict_stock(request: StockFilterRequest):
         features = df[['Close', 'Volume', 'RSI', 'MACD']]
         scaler_path = os.path.join(model_dir, f"{request.symbol}_scaler.save")
         model_path = os.path.join(model_dir, f"{request.symbol}_lstm.h5")
+
 
         scaler = joblib.load(scaler_path)
         model = load_model(model_path)
@@ -306,12 +609,14 @@ def predict_stock(request: StockFilterRequest):
         for _ in range(request.days_forward):
             predicted_scaled = model.predict(last_60, verbose=0)
             target_price_scaled = predicted_scaled[0][0]
-            inverse_input = np.array([[target_price_scaled] + [0]*(scaled_data.shape[1]-1)])
+            target_price_scaled = float(target_price_scaled)  # Ensure it's a float
+            inverse_input = np.array([[target_price_scaled] + [0.0]*(scaled_data.shape[1]-1)])
             predicted_price = scaler.inverse_transform(inverse_input)[0][0]
             forecast_prices.append(round(float(predicted_price), 2))
 
             next_input = np.append(last_60[0][1:], [[predicted_scaled[0][0], 0, 0, 0]], axis=0)
             last_60 = next_input.reshape(1, 60, scaled_data.shape[1])
+        print(f"{request.symbol} için tahmin edilen fiyatlar: {forecast_prices}")
 
         with sqlite3.connect(DB_NAME) as conn:
             c = conn.cursor()
@@ -384,3 +689,114 @@ def predict_stock(request: StockFilterRequest):
         return {"symbol": request.symbol, "predicted_prices": forecast_prices}
     except Exception as e:
         return {"symbol": request.symbol, "predicted_prices": [], "error": str(e)}
+    
+def generate_prediction_and_save(request: StockFilterRequest):
+    result = predict_stock(request)
+    if "error" in result:
+        print(f"Hata oluştu: {request.symbol} -> {result['error']}")
+    else:
+        print(f"{request.symbol} tahmini başarıyla işlendi ve kaydedildi.")
+
+
+
+def train_model_for_symbol(symbol: str):
+   for name, symbol in symbols_info.items():
+    try:
+        history = yf.download(symbol, period="1y")
+        if len(history) < 100:
+            continue
+
+        df = history[['Open', 'High', 'Low', 'Close', 'Volume']].copy()
+        close_series = pd.Series(df['Close'].values.ravel())
+        df['RSI'] = RSIIndicator(close=close_series).rsi().values
+        df['MACD'] = MACD(close=close_series).macd().values
+        df = df.dropna()
+
+        if len(df) < 100:
+            print(f"Not enough data after indicators for {symbol}. Rows: {len(df)}")
+            continue
+
+        features = df[['Close', 'Volume', 'RSI', 'MACD']]
+        scaler = MinMaxScaler()
+        scaled_data = scaler.fit_transform(features)
+
+        X, y = [], []
+        for i in range(60, len(scaled_data)):
+            X.append(scaled_data[i-60:i])
+            y.append(scaled_data[i, 0])
+
+        X, y = np.array(X), np.array(y)
+
+        model_path = os.path.join(model_dir, f"{symbol}_lstm.h5")
+        scaler_path = os.path.join(model_dir, f"{symbol}_scaler.save")
+
+        if not os.path.exists(model_path):
+            model = Sequential()
+            model.add(LSTM(units=50, return_sequences=True, input_shape=(X.shape[1], X.shape[2])))
+            model.add(LSTM(units=50))
+            model.add(Dense(1))
+            model.compile(optimizer='adam', loss='mean_squared_error')
+            model.fit(X, y, epochs=10, batch_size=32, verbose=0)
+            model.save(model_path)
+            joblib.dump(scaler, scaler_path)
+        else:
+            model = load_model(model_path)
+            scaler = joblib.load(scaler_path)
+
+        last_60 = scaled_data[-60:].reshape(1, 60, scaled_data.shape[1])
+        predicted_scaled = model.predict(last_60, verbose=0)
+        target_price_scaled = predicted_scaled[0][0]
+        inverse_input = np.array([[target_price_scaled] + [0]*(scaled_data.shape[1]-1)])
+        target_price = float(scaler.inverse_transform(inverse_input)[0][0])
+
+        last_price = float(df['Close'].iloc[-1].item())
+        potential_return = round(((target_price - last_price) / last_price) * 100, 2)
+
+        if potential_return > 50:
+            advice = "Al"
+        elif potential_return > 20:
+            advice = "Endeks Üstü Get."
+        elif potential_return > 5:
+            advice = "Tut"
+        else:
+            advice = "Sat"
+
+        c.execute('SELECT advice_date FROM recommendations WHERE stock_code=? ORDER BY advice_date DESC LIMIT 1', (symbol,))
+        prev_advice_row = c.fetchone()
+        prev_advice_date = prev_advice_row[0] if prev_advice_row else "2024-01-01"
+
+        c.execute('SELECT * FROM recommendations WHERE stock_code=? AND advice_date=?', (symbol, str(date.today())))
+        exists = c.fetchone()
+        if not exists:
+            c.execute('''INSERT INTO recommendations (stock_code, advice_type, target_price, potential_return, advice_date, close_price, prev_target, prev_advice_date, institution) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                (symbol, advice, round(float(target_price), 2), potential_return, str(date.today()), round(last_price, 2),
+                 round(float(df['Close'].iloc[-30].item()), 2) if len(df) >= 30 else round(float(df['Close'].iloc[0].item()), 2),
+                 prev_advice_date, name))
+            conn.commit()
+
+    except Exception as e:
+        import traceback
+        print(f"Error processing {symbol}: {e}")
+        traceback.print_exc()
+
+
+# Yeni hisse ekleme endpoint'i
+from fastapi import HTTPException
+
+@app.post("/stocks/add")
+def add_stock(request: AddStockRequest):
+    if request.name in symbols_info:
+        raise HTTPException(status_code=400, detail="Bu hisse zaten mevcut.")
+
+    symbols_info[request.name] = request.symbol
+    symbol_to_sector[request.symbol] = request.sector
+    institutions.append(request.name)
+
+    print(f"{request.symbol} yeni hisse olarak eklendi. Eğitim kontrolü başlatılıyor...")
+    try:
+        train_model_for_symbol(request.symbol)
+    except Exception as e:
+        print(f"{request.symbol} için eğitim sırasında hata: {e}")
+        raise HTTPException(status_code=500, detail=f"Model eğitilemedi: {e}")
+
+    return {"message": f"{request.name} başarıyla eklendi ve model eğitimi tamamlandı."}

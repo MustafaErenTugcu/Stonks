@@ -1,95 +1,87 @@
-<div class="p-4">
-  <h2 class="text-2xl font-semibold mb-4 text-center">Radar</h2>
+<div class="flex justify-center min-h-screen px-10 py-6 bg-gray-100">
+  <p-card class="w-full max-w-7xl">
+    <h1 class="flex justify-center font-bold text-xl">Radar</h1>
 
-  <!-- Filtre Alanları -->
-  <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
-    <p-dropdown 
-      [options]="sectors" 
-      [(ngModel)]="selectedSector" 
-      placeholder="Sektör seçiniz">
-    </p-dropdown>
+    <!-- Filter Section -->
+    <div class="grid grid-cols-3 gap-y-5 p-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Sektör</label>
+        <p-dropdown styleClass="w-3/6" placeholder="Sektör seçiniz" [options]="sectors" [(ngModel)]="selectedSector"
+        ></p-dropdown>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Tavsiye Durumu</label>
+        <p-dropdown styleClass="w-3/6" placeholder="Tavsiye Durumu"  [options]="adviceTypes"
+                    [(ngModel)]="selectedAdvice"></p-dropdown>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Kurum</label>
+        <p-dropdown styleClass="w-3/6" placeholder="Kurum seçiniz"  [options]="institutions"
+                    [(ngModel)]="selectedInstitution"
+        ></p-dropdown>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Tahmin Başlangıç Tarihi</label>
+        <input type="date" placeholder="Tahmin başlangıç tarihi seçin"      [(ngModel)]="startDate"
+               dateFormat="yy-mm-dd" class=" w-3/6 p-2 border border-gray-300 rounded-md">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Tahmin Bitiş Tarihi</label>
+        <input type="date" placeholder="Tahmin Bitiş Tarihi Seçin"   [(ngModel)]="endDate" dateFormat="yy-mm-dd"
+               class=" w-3/6  p-2 border border-gray-300 rounded-md">
+      </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Senet Kodu</label>
+          <p-dropdown  placeholder="Senet Kodu Seçiniz"     [options]="stockCodes"
+                       [(ngModel)]="selectedStockCode"
+          ></p-dropdown>
+        </div>
 
-    <p-dropdown 
-      [options]="adviceTypes" 
-      [(ngModel)]="selectedAdvice" 
-      placeholder="Tavsiye Durumu">
-    </p-dropdown>
+    </div>
+    <div class="flex justify-end mr-16 ">
+      <p-button  (onClick)="getRadarData()">Filtrele</p-button>
+      <p-button  (onClick)="clearFilters()">Temizle</p-button>
+    </div>
 
-    <p-dropdown 
-      [options]="institutions" 
-      [(ngModel)]="selectedInstitution" 
-      placeholder="Kurum seçiniz">
-    </p-dropdown>
+    <!-- Data Table Section -->
+    <p-table
+      [value]="allCards"
+      [paginator]="true"
+      [rows]="5"
+      [responsive]="true"
+      [resizableColumns]="true"
+      class="p-datatable-gridlines text-center">
 
-    <p-calendar 
-      [(ngModel)]="startDate" 
-      placeholder="Tahmin Başlangıç Tarihi" 
-      dateFormat="yy-mm-dd">
-    </p-calendar>
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Hisse</th>
+          <th>Tavsiye</th>
+          <th>Hedef Fiyat</th>
+          <th>Getiri (%)</th>
+          <th>Kapanış</th>
+          <th>Kurum</th>
+          <th>Sektör</th>
+          <th>Tarih</th>
+        </tr>
+      </ng-template>
 
-    <p-calendar 
-      [(ngModel)]="endDate" 
-      placeholder="Tahmin Bitiş Tarihi" 
-      dateFormat="yy-mm-dd">
-    </p-calendar>
-
-    <p-dropdown 
-      [options]="stockCodes" 
-      [(ngModel)]="selectedStockCode" 
-      placeholder="Senet Kodu Seçiniz">
-    </p-dropdown>
-
-    <button 
-      pButton 
-      type="button" 
-      label="Filtrele" 
-      class="p-button-primary" 
-      (click)="getRadarData()">
-    </button>
-
-    <button 
-      pButton 
-      type="button" 
-      label="Temizle" 
-      class="p-button-secondary" 
-      (click)="clearFilters()">
-    </button>
-  </div>
-
-  <!-- Tablo Alanı -->
-  <p-table 
-  [value]="allCards" 
-  [paginator]="true" 
-  [rows]="5"
-  [responsive]="true" 
-  [resizableColumns]="true" 
-  class="p-datatable-gridlines text-center">
-
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Hisse</th>
-        <th>Tavsiye</th>
-        <th>Hedef Fiyat</th>
-        <th>Getiri (%)</th>
-        <th>Kapanış</th>
-        <th>Kurum</th>
-        <th>Sektör</th>
-        <th>Tarih</th>
-      </tr>
-    </ng-template>
-
-    <ng-template pTemplate="body" let-stock>
-      <tr>
-        <td>{{ stock.stock_code }}</td>
-        <td>{{ stock.advice_type }}</td>
-        <td>{{ stock.target_price | number: "1.2-2" }}</td>
-        <td>{{ stock.potential_return | number: "1.2-2" }}</td>
-        <td>{{ stock.close_price | number: "1.2-2" }}</td>
-        <td>{{ stock.institution }}</td>
-        <td>{{ stock.sector }}</td>
-        <td>{{ stock.advice_date }}</td>
-      </tr>
-    </ng-template>
-
-  </p-table>
+      <ng-template pTemplate="body" let-stock>
+        <tr>
+          <td>{{ stock.stock_code }}</td>
+          <td>{{ stock.advice_type }}</td>
+          <td>{{ stock.target_price | number: "1.2-2" }}</td>
+          <td>{{ stock.potential_return | number: "1.2-2" }}</td>
+          <td>{{ stock.close_price | number: "1.2-2" }}</td>
+          <td>{{ stock.institution }}</td>
+          <td>{{ stock.sector }}</td>
+          <td>{{ stock.advice_date }}</td>
+        </tr>
+      </ng-template>
+      </p-table>
+  </p-card>
 </div>
+
+<footer class="bg-purple-600 text-white text-center p-4">
+  <p class="text-sm">💙 Finansal Tahmin Sistemi - Tüm Hakları Saklıdır.</p>
+  <p class="text-xs mt-2">Made with 💖 by <span class="font-semibold">Bazo</span></p>
+</footer>

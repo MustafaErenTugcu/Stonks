@@ -17,4 +17,9 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/app
+       - ./BorsaTakipBackend:/app
+       - /etc/localtime:/etc/localtime:ro
+       - ./BorsaTakipBackend/stonks.db:/BorsaTakipBackend/stonks.db
+       - ./BorsaTakipBackend/models:/BorsaTakipBackend/models  
+    environment:
+      - TZ=Europe/Istanbul

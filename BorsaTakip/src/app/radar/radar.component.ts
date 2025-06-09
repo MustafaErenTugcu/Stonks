@@ -66,9 +66,9 @@ export class RadarComponent implements OnInit {
   }
 
   getRadarData(): void {
-    const formattedStart = this.startDate ? this.startDate.toISOString().split('T')[0] : undefined;
-    const formattedEnd = this.endDate ? this.endDate.toISOString().split('T')[0] : undefined;
-
+    const formattedStart = this.startDate ? new Date(this.startDate).toISOString().split('T')[0] : undefined;
+    const formattedEnd = this.endDate ? new Date(this.endDate).toISOString().split('T')[0] : undefined;
+  
     this.radarService.getRadarData(
       this.selectedSector || undefined,
       this.selectedAdvice || undefined,
@@ -78,14 +78,18 @@ export class RadarComponent implements OnInit {
       this.selectedStockCode || undefined
     ).subscribe(data => {
       this.allCards = data;
-      this.stockData = this.allCards.slice(0, this.rows);
-      this.first = 0;
+      this.first = 0; // Sayfa başa alınır
+      this.updateDisplayedData(); // Güncelleme fonksiyonu çağrılır
     });
   }
-
+  
+  updateDisplayedData(): void {
+    this.stockData = this.allCards.slice(this.first, this.first + this.rows);
+  }
+  
   onPageChange(event: any): void {
     this.first = event.first;
-    this.stockData = this.allCards.slice(this.first, this.first + this.rows);
+    this.updateDisplayedData();
   }
 
   clearFilters(): void {
