@@ -23,9 +23,10 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         <div
           *ngFor="let card of displayedCards"
+          
           class="p-card bg-gray-800 rounded-xl overflow-hidden shadow-lg transition-transform duration-300 hover:transform hover:scale-105"
         >
-          <div class="p-4">
+          <div class="p-4 cursor-pointer" (click)="openDetail(card.stock_code)">
             <!-- Logo Alanı -->
             <div class="bg-white rounded-lg p-3 mb-4 flex justify-center items-center">
               <img
@@ -71,7 +72,11 @@
                 <i class="pi pi-check-circle mr-2"></i>
                 {{ card.advice_type }}
               </button>
-
+              <button class="p-button p-component flex-grow justify-center whitespace-nowrap py-2 rounded-lg bg-green-600 hover:bg-blue-700 font-semibold"
+                (click)="openDetail(card.stock_code)">
+        <i class="pi pi-chart-line mr-2 "></i>
+        Detayları Göster
+        </button>
              
             </div>
 
@@ -101,3 +106,37 @@
     <p class="text-xs mt-2">Made with 💖 by <span class="font-semibold">Bazo</span></p>
   </footer>
 </div>
+
+<p-dialog header="{{ selectedSymbol }} Detayları" [(visible)]="showDialog"
+          [modal]="true" [style]="{width: '50vw'}"
+          [contentStyle]="{'background':'#111827', 'color':'#fff'}">
+
+  <div class="flex gap-2 mb-4 mt-2">
+    <button pButton label="7G" (click)="changeRange('7d')"></button>
+    <button pButton label="1A" (click)="changeRange('1mo')"></button>
+    <button pButton label="6A" (click)="changeRange('6mo')"></button>
+    <button pButton label="1Y" (click)="changeRange('1y')"></button>
+  </div>
+   <p-chart
+  *ngIf="dialogChartData && dialogChartData?.labels?.length"
+  type="line"
+  [data]="dialogChartData"
+  [options]="dialogChartOptions"
+  style="height: 400px; width: 100%; overflow: hidden;"
+  >
+</p-chart>
+  
+
+  <div class="grid grid-cols-2 gap-4 text-sm mt-6">
+    <div><strong>Açılış:</strong> {{ selectedCompanyInfo?.open }}</div>
+    <div><strong>Kapanış:</strong> {{ selectedCompanyInfo?.close }}</div>
+    <div><strong>Hacim:</strong> {{ selectedCompanyInfo?.volume }}</div>
+    <div><strong>Piyasa Değeri:</strong> {{ selectedCompanyInfo?.marketCap }}</div>
+    <div><strong>PE Oranı:</strong> {{ selectedCompanyInfo?.peRatio }}</div>
+    <div><strong>52 Hafta Aralığı:</strong> {{ selectedCompanyInfo?.weekRange }}</div>
+    <div><strong>Beta:</strong> {{ selectedCompanyInfo?.beta }}</div>
+    <div><strong>1Y Hedef:</strong> {{ selectedCompanyInfo?.target }}</div>
+  </div>
+
+ 
+</p-dialog>

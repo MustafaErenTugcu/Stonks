@@ -19,6 +19,8 @@ from fastapi import HTTPException
 import time
 import requests
 from curl_cffi import  requests
+from fastapi import Query
+
 app = FastAPI()
 
 session = requests.Session(impersonate="safari") # Using curl_cffi for better compatibility with yfinance
@@ -483,7 +485,7 @@ def generate_initial_recommendations():
                 days_forward=7
             )
             generate_prediction_and_save(dummy_request)
-            time.sleep(7)  # API limitine takılmamak için
+            time.sleep(2)  # API limitine takılmamak için
         except Exception as e:
             print(f"{symbol} startup işleminde hata: {e}")
 
@@ -504,14 +506,6 @@ def get_recommendations(period: Optional[str] = Query("all")):
 def list_stocks():
     return list(symbols_info.values())
 
-@app.get("/stocks/data")
-def get_stock_data(symbol: str, start: str, end: str):
-    try:
-        df = yf.download(symbol, start=start, end=end,session=session)
-        df.reset_index(inplace=True)
-        return df.to_dict(orient="records")
-    except Exception as e:
-        return {"error": str(e)}
 
 @app.get("/radar")
 def get_radar_data(
@@ -800,3 +794,57 @@ def add_stock(request: AddStockRequest):
         raise HTTPException(status_code=500, detail=f"Model eğitilemedi: {e}")
 
     return {"message": f"{request.name} başarıyla eklendi ve model eğitimi tamamlandı."}
+
+@app.get("/stocks/data")
+def get_stock_data(
+    symbol: str,
+    range_: str = Query("7d", alias="range")
+):
+    try:
+        interval = "1d" if range_ in ["6mo", "1y"] else "1h"
+        df = yf.download(tickers=symbol, period=range_, interval=interval, auto_adjust=False)
+
+        if df.empty:
+            print(f"⚠️ {symbol} için veri bulunamadı.")
+            return []
+
+        df.reset_index(inplace=True)
+
+        # ✅ MultiIndex düzeltmesi
+        if isinstance(df.columns, pd.MultiIndex):
+            df.columns = df.columns.get_level_values(0)
+
+        if 'Date' not in df.columns:
+            df['Date'] = df.index.astype(str)
+        else:
+            df['Date'] = df['Date'].astype(str)
+
+        df = df[['Date', 'Open', 'High', 'Low', 'Close', 'Volume']]
+
+        print(f"📊 {symbol} verisi:\n", df.head(2).to_dict(orient="records"))
+
+        return df.to_dict(orient="records")
+
+    except Exception as e:
+        print(f"🔥 Veri çekme hatası ({symbol}): {e}")
+        return {"error": f"{type(e).__name__}: {str(e)}"}
+    
+
+@app.get("/stocks/info")
+def get_stock_info(symbol: str):
+    try:
+        ticker = yf.Ticker(symbol)
+        info = ticker.info
+        return {
+            "open": info.get("open"),
+            "close": info.get("previousClose"),
+            "volume": info.get("volume"),
+            "marketCap": info.get("marketCap"),
+            "peRatio": info.get("trailingPE"),
+            "weekRange": info.get("fiftyTwoWeekRange"),
+            "beta": info.get("beta"),
+            "target": info.get("targetMeanPrice")
+        }
+    except Exception as e:
+        print(f"Stock info hatası: {e}")
+        return {"error": str(e)}

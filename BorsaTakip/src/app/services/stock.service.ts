@@ -32,5 +32,11 @@ export class StockService {
     return this.http.get(`${this.baseUrl}/radar`, { params });
   }
 
-  // Diğer mevcut servis metodların burada kalabilir...
+ getChartData(symbol: string, range: string) {
+  return this.http.get<any[]>(`http://localhost:8000/stocks/data?symbol=${symbol}&range=${range}`);
+}
+
+  getCompanyInfo(symbol: string) {
+  return this.http.get<any>(`http://localhost:8000/stocks/info?symbol=${symbol}`);
+}
 }

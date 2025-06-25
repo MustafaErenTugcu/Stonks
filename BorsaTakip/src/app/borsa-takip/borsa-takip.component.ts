@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HomepageService } from '../services/homepage.service';
+import { StockService } from '../services/stock.service';
 
 @Component({
   selector: 'app-borsa-takip',
@@ -12,8 +13,17 @@ export class BorsaTakipComponent implements OnInit {
   displayedCards: any[] = [];
   pageSize: number = 8;
   first: number = 0;
+  selectedSymbol: string = '';
+  showDialog: boolean = false;
+  dialogChartData: any;
+  dialogChartOptions: any;
+  selectedCompanyInfo: any;
+  selectedRange: string = '1mo';
 
-  constructor(private homepageService: HomepageService) {}
+  constructor(
+    private homepageService: HomepageService,
+    private stockService: StockService
+  ) {}
 
   ngOnInit(): void {
     this.getHomepageData();
@@ -26,7 +36,9 @@ export class BorsaTakipComponent implements OnInit {
   getHomepageData(): void {
     this.homepageService.getHomepageRecommendations().subscribe({
       next: (data) => {
-        this.allCards = data.sort((a: any, b: any) => new Date(b.advice_date).getTime() - new Date(a.advice_date).getTime());
+        this.allCards = data.sort(
+          (a: any, b: any) => new Date(b.advice_date).getTime() - new Date(a.advice_date).getTime()
+        );
         this.filteredCards = [...this.allCards];
         this.updateDisplayedCards();
       },
@@ -93,5 +105,111 @@ export class BorsaTakipComponent implements OnInit {
     this.filteredCards = [...this.allCards];
     this.first = 0;
     this.updateDisplayedCards();
+  }
+
+  openDetail(symbol: string) {
+    this.selectedSymbol = symbol;
+    this.selectedRange = '7d';
+    this.showDialog = true;
+    this.loadStockData(symbol, this.selectedRange);
+  }
+
+  changeRange(range: string) {
+    this.selectedRange = range;
+    this.loadStockData(this.selectedSymbol, range);
+  }
+
+  loadStockData(symbol: string, range: string) {
+    this.stockService.getChartData(symbol, range).subscribe(data => {
+      console.log("Gelen grafik verisi:", data);
+
+      const labels = data.map(d => d.Date);
+      const prices = data.map(d => d.Close);
+
+      if (!labels.length || !prices.length) {
+        console.warn('Grafik verisi bulunamadı.');
+        this.dialogChartData = null;
+        return;
+      }
+
+      this.dialogChartData = {
+        labels: labels,
+        datasets: [
+          {
+            label: `${symbol} Fiyatı - ${range.toUpperCase()}`,
+            data: prices,
+            fill: true,
+            borderColor: '#42A5F5',
+            backgroundColor: 'rgba(66,165,245,0.1)',
+            tension: 0.4,
+            pointStyle: 'circle',
+            pointRadius: 3,
+            pointHoverRadius: 5
+          }
+        ],
+        rawData: data
+      };
+
+      let maxTicks = 7;
+      if (range === '1mo') maxTicks = 15;
+      else if (range === '6mo') maxTicks = 12;
+      else if (range === '1y') maxTicks = 12;
+
+      this.dialogChartOptions = {
+        responsive: true,
+        interaction: {
+          intersect: false,
+          mode: 'index'
+        },
+        plugins: {
+          legend: { labels: { color: '#fff' } },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+            callbacks: {
+              label: function(context: any) {
+                const index = context.dataIndex;
+                const point = context.chart.data.rawData[index];
+                return [
+                  `Fiyat: ${point.Close}`,
+                  `Açılış: ${point.Open}`,
+                  `Yüksek: ${point.High}`,
+                  `Düşük: ${point.Low}`,
+                  `Hacim: ${point.Volume}`
+                ];
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            type: 'category',
+            ticks: {
+              color: '#fff',
+              maxRotation: 0,
+              autoSkip: true,
+              maxTicksLimit: maxTicks
+            },
+            grid: { color: 'rgba(255,255,255,0.1)' }
+          },
+          y: {
+            ticks: { color: '#fff' },
+            grid: { color: 'rgba(255,255,255,0.1)' }
+          }
+        }
+      };
+    });
+
+    this.stockService.getCompanyInfo(symbol).subscribe(info => {
+      this.selectedCompanyInfo = info;
+    });
+  }
+
+  closeDialog() {
+    this.showDialog = false;
+    this.selectedSymbol = '';
+    this.dialogChartData = null;
+    this.dialogChartOptions = null;
+    this.selectedCompanyInfo = null;
   }
 }
