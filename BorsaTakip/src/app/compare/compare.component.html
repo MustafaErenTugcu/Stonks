@@ -5,8 +5,8 @@
       <h1 class="flex justify-center font-bold text-xl">Hisse Karşılaştır</h1>
       <h3 class="flex justify-center">İki hisse senedi seçtikten sonra butona basınız.</h3>
       <div class="grid grid-cols-2 justify-items-center align-items-center mt-6">
-        <p-dropdown [options]="stockOptions" [(ngModel)]="selectedStock1" placeholder="Hisse senedi seçiniz."></p-dropdown>
-        <p-dropdown [options]="stockOptions" [(ngModel)]="selectedStock2" placeholder="Hisse senedi seçiniz."></p-dropdown>
+      <p-dropdown [options]="stockOptions" [(ngModel)]="selectedStock1" optionLabel="label" optionValue="value" placeholder="Hisse senedi seçiniz."></p-dropdown>
+      <p-dropdown [options]="stockOptions" [(ngModel)]="selectedStock2" optionLabel="label" optionValue="value" placeholder="Hisse senedi seçiniz."></p-dropdown>
       </div>
       <p-button (onClick)="karsilastirClick()" label="Karşılaştır" class="p-button-success flex justify-center"></p-button>
 
